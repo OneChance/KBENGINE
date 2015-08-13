@@ -1,0 +1,35 @@
+<root>
+	<Properties>
+	    <version>
+	         <Type>UINT8</Type>
+	         <Flags>BASE</Flags>
+             <Default></Default>
+	         <Persistent>true</Persistent>
+	    </version>
+        <items>
+          <Type>ITEM_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </items>
+	</Properties>
+
+	<ClientMethods>
+	    <onReqItemList>
+          <Utype>10004</Utype>
+          <Arg>ITEM_LIST</Arg>
+        </onReqItemList>
+	</ClientMethods>
+
+	<BaseMethods>
+        <reqItemList>
+          <Exposed/>
+          <Utype>10005</Utype>
+          <Arg>UINT8</Arg>
+        </reqItemList>
+	</BaseMethods>
+
+	<CellMethods>
+	</CellMethods>
+
+</root>

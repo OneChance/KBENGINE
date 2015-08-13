@@ -1,0 +1,44 @@
+<root>
+	<Properties>
+        <roles>
+          <Type>ROLE_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </roles>
+	</Properties>
+
+	<ClientMethods>
+
+        <onReqRoleList>
+          <Utype> 10000 </Utype>
+          <Arg>	ROLE_LIST	</Arg>
+        </onReqRoleList>
+
+        <onCreateRoleResult>
+          <Utype>10002</Utype>
+          <Arg>UINT8</Arg>
+          <Arg>ROLE</Arg>
+        </onCreateRoleResult>
+    
+	</ClientMethods>
+
+	<BaseMethods>
+        <reqRoleList>
+          <Exposed/>
+          <Utype> 10001 </Utype>
+        </reqRoleList>
+
+        <reqCreateRole>
+          <Exposed/>
+          <Utype> 10003 </Utype>
+          <Arg>	UNICODE	</Arg>
+          <Arg>	UNICODE	</Arg>
+        </reqCreateRole>
+    
+	</BaseMethods>
+
+	<CellMethods>
+	</CellMethods>
+
+</root>
