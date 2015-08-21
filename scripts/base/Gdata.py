@@ -28,6 +28,7 @@ class Gdata(KBEngine.Proxy):
 			self.client.onReqItemList(self.items)
 		else:
 			self.client.onReqItemList(TITEMList())
+		self.giveClientTo(self.accountEntity)
 		
 	def onTimer(self, id, userArg):
 		"""

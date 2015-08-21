@@ -31,7 +31,7 @@ class Account(KBEngine.Proxy):
 
 	def reqCreateRole(self, name,pro):
 			role = TROLE()
-			player = TPLAYER().createFromDict({"name":name,"stamina" : 0, "health" :0, "level" :1,"iid":(int)(pro)})
+			player = TPLAYER().createFromDict({"iid":(int)(pro),"name":name,"stamina" : 0, "health" :0, "level" :1,"exp":0})
 			role.extend([0,player,[],[],[]])
 			self.roles[0] = role
 			self.writeToDB()
