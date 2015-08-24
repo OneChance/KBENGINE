@@ -17,7 +17,6 @@
 
         <onCreateRoleResult>
           <Utype>10002</Utype>
-          <Arg>UINT8</Arg>
           <Arg>ROLE</Arg>
         </onCreateRoleResult>
     

@@ -2,7 +2,7 @@
 import KBEngine
 from KBEDebug import * 
 
-class TROLE(list):
+class TSHOPITEM(list):
 	"""
 	"""
 	def __init__(self):
@@ -13,35 +13,31 @@ class TROLE(list):
 	def asDict(self):
 		data = {
 			"dbid": self[0],
-			"info": self[1],
-			"equips": self[2],
-			"bggrids": self[3],
-			"assits": self[4],
-			"money":self[5],
+			"iid": self[1],
 		}
 		
 		return data
 
 	def createFromDict(self, dictData):
-		self.extend([dictData["dbid"],dictData["info"],dictData["equips"],dictData["bggrids"],dictData["assits"],dictData["money"]])
+		self.extend([dictData["dbid"],dictData["iid"]])
 		return self
 		
-class ROLE_PICKLER:
+class SHOPITEM_PICKLER:
 	def __init__(self):
 		pass
 
 	def createObjFromDict(self, dct):
-		return TROLE().createFromDict(dct)
+		return TSHOPITEM().createFromDict(dct)
 
 	def getDictFromObj(self, obj):
 		return obj.asDict()
 
 	def isSameType(self, obj):
-		return isinstance(obj, TROLE)
+		return isinstance(obj, TSHOPITEM)
 
-role_inst = ROLE_PICKLER()
+shopitem_inst = SHOPITEM_PICKLER()
 
-class TROLEList(dict):
+class TSHOPITEMList(dict):
 	"""
 	"""
 	def __init__(self):
@@ -63,17 +59,17 @@ class TROLEList(dict):
 			self[data[0]] = data
 		return self
 		
-class ROLE_LIST_PICKLER:
+class SHOPITEM_LIST_PICKLER:
 	def __init__(self):
 		pass
 
 	def createObjFromDict(self, dct):
-		return TROLEList().createFromDict(dct)
+		return TSHOPITEMList().createFromDict(dct)
 
 	def getDictFromObj(self, obj):
 		return obj.asDict()
 
 	def isSameType(self, obj):
-		return isinstance(obj, TROLEList)
+		return isinstance(obj, TSHOPITEMList)
 
-role_list_inst = ROLE_LIST_PICKLER()
+shopitem_list_inst = SHOPITEM_LIST_PICKLER()

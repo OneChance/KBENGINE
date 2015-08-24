@@ -5,6 +5,7 @@ from BATTLEOBJ import TBATTLEOBJ
 from PLAYER import TPLAYER
 from KBEDebug import *
 from ITEM import TITEMList
+from SHOPITEM import TSHOPITEMList
 
 class Gdata(KBEngine.Proxy):
 
@@ -25,9 +26,9 @@ class Gdata(KBEngine.Proxy):
 	def onGetData(self, baseRef, dbid, wasActive):
 		gdataEntity = KBEngine.entities.get(baseRef.id);
 		if(self.DATAVERSION < gdataEntity.version):
-			self.client.onReqItemList(self.items)
+			self.client.onReqItemList(self.items,self.itemshop,self.assistshop,self.equipshop)
 		else:
-			self.client.onReqItemList(TITEMList())
+			self.client.onReqItemList(TITEMList(),TSHOPITEMList(),TSHOPITEMList())
 		self.giveClientTo(self.accountEntity)
 		
 	def onTimer(self, id, userArg):

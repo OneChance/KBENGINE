@@ -12,12 +12,37 @@
           <Default></Default>
           <Persistent>true</Persistent>
         </items>
+        
+        <itemshop>
+          <Type>SHOPITEM_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </itemshop>
+        
+         <equipshop>
+          <Type>SHOPITEM_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </equipshop>
+        
+        <assistshop>
+          <Type>SHOPITEM_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </assistshop>
+        
 	</Properties>
 
 	<ClientMethods>
 	    <onReqItemList>
           <Utype>10004</Utype>
           <Arg>ITEM_LIST</Arg>
+          <Arg>SHOPITEM_LIST</Arg>
+          <Arg>SHOPITEM_LIST</Arg>
+          <Arg>SHOPITEM_LIST</Arg>
         </onReqItemList>
 	</ClientMethods>
 

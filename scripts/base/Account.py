@@ -19,11 +19,11 @@ class Account(KBEngine.Proxy):
 		"""
 		DEBUG_MSG("Account[%i].reqRoleList: size=%i." % (self.id, len(self.roles)))
 		self.client.onReqRoleList(self.roles)
-		gdata = KBEngine.createBaseAnywhereFromDBID("Gdata",1,self.onGetData);
+		gdata = KBEngine.createBaseAnywhereFromDBID("Gdata",1,self.onGetData)
 
 
 	def onGetData(self, baseRef, dbid, wasActive):
-		gdataEntity = KBEngine.entities.get(baseRef.id);
+		gdataEntity = KBEngine.entities.get(baseRef.id)
 		gdataEntity.accountEntity = self
 		self.gdata = gdataEntity;
 		self.giveClientTo(gdataEntity)
@@ -32,9 +32,11 @@ class Account(KBEngine.Proxy):
 	def reqCreateRole(self, name,pro):
 			role = TROLE()
 			player = TPLAYER().createFromDict({"iid":(int)(pro),"name":name,"stamina" : 0, "health" :0, "level" :1,"exp":0})
-			role.extend([0,player,[],[],[]])
+			role.extend([0,player,[],[],[],5000])
 			self.roles[0] = role
 			self.writeToDB()
+
+			self.client.onCreateRoleResult(role)
 		
 	def onTimer(self, id, userArg):
 		"""

@@ -1,207 +1,39 @@
 <root>
-
-  <DBID>UINT64</DBID>
-
-  <EQUIP>
+	<DBID>UINT64</DBID>
+	<EQUIP>
     FIXED_DICT
-    <implementedBy>EQUIP.inst</implementedBy>
-    <Properties>
-      <dbid>
-        <Type>	DBID	</Type>
-      </dbid>
-      <eid>
-        <Type>	UINT16	</Type>
-      </eid>
-    </Properties>
-  </EQUIP>
-
-  <BGGRID>
+    <implementedBy>EQUIP.inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><eid><Type>	UINT16	</Type></eid></Properties></EQUIP>
+	<BGGRID>
     FIXED_DICT
-    <implementedBy>BGGRID.inst</implementedBy>
-    <Properties>
-      <dbid>
-        <Type>	DBID	</Type>
-      </dbid>
-      <iid>
-        <Type>	UINT16	</Type>
-      </iid>
-      <num>
-        <Type>	UINT16	</Type>
-      </num>
-      <ilevel>
-        <Type>	UINT16	</Type>
-      </ilevel>
-    </Properties>
-  </BGGRID>
-
-  <PLAYER>
+    <implementedBy>BGGRID.inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><iid><Type>	UINT16	</Type></iid><num><Type>	UINT16	</Type></num><ilevel><Type>	UINT16	</Type></ilevel></Properties></BGGRID>
+	<PLAYER>
     FIXED_DICT
-    <implementedBy>PLAYER.inst</implementedBy>
-    <Properties>
-      <iid>
-        <Type>	UINT16	</Type>
-      </iid>
-      <name>
-        <Type>	UNICODE	</Type>
-      </name>
-      <stamina>
-        <Type>	UINT16	</Type>
-      </stamina>
-      <health>
-        <Type>	UINT16	</Type>
-      </health>
-      <level>
-        <Type>	UINT16	</Type>
-      </level>
-      <exp>
-        <Type>	UINT16	</Type>
-      </exp>
-    </Properties>
-  </PLAYER>
-
-  <BATTLEOBJ>
+    <implementedBy>PLAYER.inst</implementedBy><Properties><iid><Type>	UINT16	</Type></iid><name><Type>	UNICODE	</Type></name><stamina><Type>	UINT16	</Type></stamina><health><Type>	UINT16	</Type></health><level><Type>	UINT16	</Type></level><exp><Type>	UINT16	</Type></exp></Properties></PLAYER>
+	<BATTLEOBJ>
     FIXED_DICT
-    <implementedBy>BATTLEOBJ.inst</implementedBy>
-    <Properties>
-      <dbid>
-        <Type>	DBID	</Type>
-      </dbid>
-      <info>
-        <Type>	PLAYER	</Type>
-      </info>
-    </Properties>
-  </BATTLEOBJ>
-
-
-  <ROLE>
+    <implementedBy>BATTLEOBJ.inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><info><Type>	PLAYER	</Type></info></Properties></BATTLEOBJ>
+	<ROLE>
     FIXED_DICT
-    <implementedBy>ROLE.role_inst</implementedBy>
-    <Properties>
-      <dbid>
-        <Type>	DBID	</Type>
-      </dbid>
-      <info>
-        <Type>	PLAYER	</Type>
-      </info>
-      <equips>
-        <Type>
-          ARRAY <of> EQUIP </of>
-        </Type>
-      </equips>
-      <bggrids>
-        <Type>
-          ARRAY <of> BGGRID </of>
-        </Type>
-      </bggrids>
-       <assits>
-        <Type>
-          ARRAY <of> BATTLEOBJ </of>
-        </Type>
-      </assits>    
-    </Properties>
-  </ROLE>
-
-  <ROLE_LIST>
+    <implementedBy>ROLE.role_inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><info><Type>	PLAYER	</Type></info><equips><Type>
+          ARRAY <of> EQUIP </of></Type></equips><bggrids><Type>
+          ARRAY <of> BGGRID </of></Type></bggrids><assits><Type>
+          ARRAY <of> BATTLEOBJ </of></Type></assits><money><Type>	UINT32	</Type></money></Properties></ROLE>
+	<ROLE_LIST>
     FIXED_DICT
-    <implementedBy>ROLE.role_list_inst</implementedBy>
-    <Properties>
-      <values>
-        <Type>
-          ARRAY <of> ROLE </of>
-        </Type>
-      </values>
-    </Properties>
-  </ROLE_LIST>
-
-
-
-  <ITEM>
+    <implementedBy>ROLE.role_list_inst</implementedBy><Properties><values><Type>
+          ARRAY <of> ROLE </of></Type></values></Properties></ROLE_LIST>
+	<ITEM>
     FIXED_DICT
-    <implementedBy>ITEM.item_inst</implementedBy>
-    <Properties>
-      <dbid>
-        <Type>	DBID	</Type>
-      </dbid>
-      <name>
-        <Type>	UNICODE	</Type>
-      </name>
-      <!-- 道具相关字段  start -->
-      <usetype>
-        <Type>	UINT16	</Type>
-      </usetype>
-      <rangetype>
-        <Type>	UINT16	</Type>
-      </rangetype>
-      <commontype>
-        <Type>	UINT16	</Type>
-      </commontype>
-      <objtype>
-        <Type>	UINT16	</Type>
-      </objtype>
-      <prefabname>
-        <Type>	UNICODE	</Type>
-      </prefabname>
-      <note>
-        <Type>	UNICODE	</Type>
-      </note>
-      <targetnote>
-        <Type>	UNICODE	</Type>
-      </targetnote>
-      <price>
-        <Type>	UINT16	</Type>
-      </price>
-      <!-- 道具相关字段  end -->
-
-      <!-- 装备相关字段  start -->
-      <strength>
-        <Type>	UINT16	</Type>
-      </strength>
-      <archeology>
-        <Type>	UINT16	</Type>
-      </archeology>
-      <def>
-        <Type>	UINT16	</Type>
-      </def>
-      <dodge>
-        <Type>	UINT16	</Type>
-      </dodge>
-      <epos>
-        <Type>	UINT16	</Type>
-      </epos>
-      <level>
-        <Type>	UINT16	</Type>
-      </level>
-      <!-- 装备相关字段  end -->
-
-      <!-- 人物相关字段  end -->
-      <stamina>
-        <Type>	UINT16	</Type>
-      </stamina>
-      <pro>
-        <Type>	UNICODE	</Type>
-      </pro>
-      <levelexpadd>
-        <Type>	UINT16	</Type>
-      </levelexpadd>
-      <!-- 人物相关字段  end -->
-
-      <!-- 敌人相关字段  start -->
-      <attack>
-        <Type>	UINT16	</Type>
-      </attack>
-      <!-- 敌人相关字段  end -->
-    </Properties>
-  </ITEM>
-
-  <ITEM_LIST>
+    <implementedBy>ITEM.item_inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><name><Type>	UNICODE	</Type></name><!-- 道具相关字段  start --><usetype><Type>	UINT16	</Type></usetype><rangetype><Type>	UINT16	</Type></rangetype><commontype><Type>	UINT16	</Type></commontype><objtype><Type>	UINT16	</Type></objtype><prefabname><Type>	UNICODE	</Type></prefabname><note><Type>	UNICODE	</Type></note><targetnote><Type>	UNICODE	</Type></targetnote><price><Type>	UINT16	</Type></price><!-- 道具相关字段  end --><!-- 装备相关字段  start --><strength><Type>	UINT16	</Type></strength><archeology><Type>	UINT16	</Type></archeology><def><Type>	UINT16	</Type></def><dodge><Type>	UINT16	</Type></dodge><epos><Type>	UINT16	</Type></epos><level><Type>	UINT16	</Type></level><!-- 装备相关字段  end --><!-- 人物相关字段  end --><stamina><Type>	UINT16	</Type></stamina><pro><Type>	UNICODE	</Type></pro><levelexpadd><Type>	UINT16	</Type></levelexpadd><!-- 人物相关字段  end --><!-- 敌人相关字段  start --><attack><Type>	UINT16	</Type></attack><!-- 敌人相关字段  end --></Properties></ITEM>
+	<ITEM_LIST>
     FIXED_DICT
-    <implementedBy>ITEM.item_list_inst</implementedBy>
-    <Properties>
-      <values>
-        <Type>
-          ARRAY <of> ITEM </of>
-        </Type>
-      </values>
-    </Properties>
-  </ITEM_LIST>
+    <implementedBy>ITEM.item_list_inst</implementedBy><Properties><values><Type>
+          ARRAY <of> ITEM </of></Type></values></Properties></ITEM_LIST>
+	<SHOPITEM>
+    FIXED_DICT
+    <implementedBy>SHOPITEM.shopitem_inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><iid><Type>	UINT16	</Type></iid></Properties></SHOPITEM>
+	<SHOPITEM_LIST>
+    FIXED_DICT
+    <implementedBy>SHOPITEM.shopitem_list_inst</implementedBy><Properties><values><Type>
+          ARRAY <of> SHOPITEM </of></Type></values></Properties></SHOPITEM_LIST>
 </root>
