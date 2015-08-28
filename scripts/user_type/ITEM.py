@@ -32,6 +32,7 @@ class TITEM(list):
 			"pro": self[17],
 			"levelexpadd": self[18],
 			"attack": self[19],
+			"health": self[20],
 		}
 		
 		return data
@@ -40,7 +41,8 @@ class TITEM(list):
 		self.extend([dictData["dbid"],dictData["name"],dictData["usetype"],dictData["rangetype"],dictData["commontype"],
 					 dictData["objtype"],dictData["prefabname"],dictData["note"],dictData["targetnote"],
 					 dictData["price"],dictData["strength"],dictData["archeology"],dictData["def"],dictData["dodge"],
-					 dictData["epos"],dictData["level"],dictData["stamina"],dictData["pro"],dictData["levelexpadd"],dictData["attack"]])
+					 dictData["epos"],dictData["level"],dictData["stamina"],dictData["pro"],dictData["levelexpadd"],dictData["attack"],
+					 dictData["health"]])
 		return self
 		
 class ITEM_PICKLER:

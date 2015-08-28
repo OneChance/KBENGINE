@@ -2,20 +2,24 @@
 import KBEngine
 from KBEDebug import * 
 
-class TBGGRID(dict):
-	"""
-	"""
+class TBGGRID(list):
+
 	def __init__(self):
-		"""
-		"""
-		dict.__init__(self)
-		
+		list.__init__(self)
+
 	def asDict(self):
-		for key, val in self.items():
-			return {"dbid" : val[0], "iid" : val[1],"num" : val[2],"ilevel" : val[3]}
+		data = {
+			"dbid": self[0],
+			"iid": self[1],
+			"num": self[2],
+			"level": self[3],
+			"commontype": self[4],
+		}
+
+		return data
 
 	def createFromDict(self, dictData):
-		self[dictData["dbid"]] = [dictData["dbid"], dictData["iid"],dictData["num"],dictData["ilevel"]]
+		self.extend([dictData["dbid"],dictData["iid"],dictData["num"],dictData["level"],dictData["commontype"]])
 		return self
 		
 class BGGRID_PICKLER:
@@ -31,4 +35,4 @@ class BGGRID_PICKLER:
 	def isSameType(self, obj):
 		return isinstance(obj, TBGGRID)
 
-inst = BGGRID_PICKLER()
+bggrid_inst = BGGRID_PICKLER()

@@ -19,6 +19,12 @@
           <Utype>10002</Utype>
           <Arg>ROLE</Arg>
         </onCreateRoleResult>
+        
+        <onTradeOver>
+          <Utype>10002</Utype>
+          <Arg>ROLE</Arg>
+          <Arg>UNICODE</Arg>
+        </onTradeOver>
     
 	</ClientMethods>
 
@@ -34,6 +40,16 @@
           <Arg>	UNICODE	</Arg>
           <Arg>	UNICODE	</Arg>
         </reqCreateRole>
+        
+        <tradeItem>
+          <Exposed/>
+          <Utype> 10010 </Utype>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+        </tradeItem>
     
 	</BaseMethods>
 
