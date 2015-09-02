@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import KBEngine
 from ROLE import TROLE
-from BATTLEOBJ import TBATTLEOBJ
 from PLAYER import TPLAYER
 from KBEDebug import *
 from ITEM import TITEMList

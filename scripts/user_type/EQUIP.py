@@ -2,20 +2,24 @@
 import KBEngine
 from KBEDebug import * 
 
-class TEQUIP(dict):
+class TEQUIP(list):
 	"""
 	"""
 	def __init__(self):
-		"""
-		"""
-		dict.__init__(self)
-		
+		list.__init__(self)
+
 	def asDict(self):
-		for key, val in self.items():
-			return {"dbid" : val[0], "eid" : val[1]}
+		data = {
+			"dbid": self[0],
+			"iid": self[1],
+			"level": self[2],
+			"commontype": self[3],
+		}
+
+		return data
 
 	def createFromDict(self, dictData):
-		self[dictData["dbid"]] = [dictData["dbid"], dictData["eid"]]
+		self.extend([dictData["dbid"],dictData["iid"],dictData["level"],dictData["commontype"]])
 		return self
 		
 class EQUIP_PICKLER:

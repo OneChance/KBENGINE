@@ -25,7 +25,24 @@
           <Arg>ROLE</Arg>
           <Arg>UNICODE</Arg>
         </onTradeOver>
-    
+
+        <onEquipOperOver>
+          <Utype>10012</Utype>
+          <Arg>ROLE</Arg>
+          <Arg>UNICODE</Arg>
+        </onEquipOperOver>
+
+        <onUseItemOver>
+          <Utype>10013</Utype>
+          <Arg>ROLE</Arg>
+          <Arg>UNICODE</Arg>
+        </onUseItemOver>
+
+        <onAssistOperOver>
+          <Utype>10015</Utype>
+          <Arg>ROLE</Arg>
+          <Arg>UNICODE</Arg>
+        </onAssistOperOver>
 	</ClientMethods>
 
 	<BaseMethods>
@@ -50,6 +67,28 @@
           <Arg>	UINT16	</Arg>
           <Arg>	UINT16	</Arg>
         </tradeItem>
+
+        <equipOper>
+          <Exposed/>
+          <Utype> 10011 </Utype>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+        </equipOper>
+
+        <useItem>
+          <Exposed/>
+          <Utype> 10014 </Utype>
+          <Arg>	UNICODE	</Arg>
+          <Arg>	UNICODE	</Arg>
+          <Arg>	UINT16	</Arg>
+        </useItem>
+
+        <assistOper>
+          <Exposed/>
+          <Utype> 10016 </Utype>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+        </assistOper>
     
 	</BaseMethods>
 

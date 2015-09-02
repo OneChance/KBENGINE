@@ -2,23 +2,16 @@
 	<DBID>UINT64</DBID>
 	<EQUIP>
     FIXED_DICT
-    <implementedBy>EQUIP.inst</implementedBy><Properties><eid><Type>	UINT16	</Type></eid></Properties></EQUIP>
-    
-	<BGGRID>
-    FIXED_DICT
-    <implementedBy>BGGRID.bggrid_inst</implementedBy>
-	    <Properties>
-	    	<dbid><Type>DBID</Type></dbid>
-		    <iid><Type>	UINT16	</Type></iid>
-		    <num><Type>	UINT16</Type></num>
+    <implementedBy>EQUIP.inst</implementedBy>
+        <Properties>
+            <dbid><Type>DBID</Type></dbid>
+            <iid><Type>	UINT16	</Type></iid>
             <level><Type> UINT16 </Type></level>
             <commontype><Type> UINT16 </Type></commontype>
-	    </Properties>
-    </BGGRID>
-    
-    
-   
-	<PLAYER>
+        </Properties>
+    </EQUIP>
+
+    <PLAYER>
     FIXED_DICT
     <implementedBy>PLAYER.inst</implementedBy>
         <Properties>
@@ -39,15 +32,51 @@
             <attack><Type>	UINT16	</Type></attack>
         </Properties>
     </PLAYER>
-
-	<BATTLEOBJ>
+    
+	<BGGRID>
     FIXED_DICT
-    <implementedBy>BATTLEOBJ.inst</implementedBy>
+    <implementedBy>BGGRID.bggrid_inst</implementedBy>
+	    <Properties>
+	    	<dbid><Type>DBID</Type></dbid>
+		    <iid><Type>	UINT16	</Type></iid>
+		    <num><Type>	UINT16</Type></num>
+            <level><Type> UINT16 </Type></level>
+            <commontype><Type> UINT16 </Type></commontype>
+            <stamina><Type>	UINT16	</Type></stamina>
+            <maxstamina><Type>	UINT16	</Type></maxstamina>
+            <health><Type>	UINT16	</Type></health>
+            <maxhealth><Type>	UINT16	</Type></maxhealth>
+            <strength><Type>	UINT16	</Type></strength>
+            <archeology><Type>	UINT16	</Type></archeology>
+            <def><Type>	UINT16	</Type></def>
+            <dodge><Type>	UINT16	</Type></dodge>
+            <exp><Type>	UINT16	</Type></exp>
+            <digpower><Type>	UINT16	</Type></digpower>
+            <attack><Type>	UINT16	</Type></attack>
+	    </Properties>
+    </BGGRID>
+
+	<ASSIST>
+    FIXED_DICT
+    <implementedBy>ASSIST.assist_inst</implementedBy>
         <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <stamina><Type>	UINT16	</Type></stamina>
+             <maxstamina><Type>	UINT16	</Type></maxstamina>
+             <health><Type>	UINT16	</Type></health>
+             <maxhealth><Type>	UINT16	</Type></maxhealth>
              <iid><Type>	UINT16	</Type></iid>
-            <info><Type>	PLAYER	</Type></info>
+             <level><Type> UINT16 </Type></level>
+             <commontype><Type> UINT16 </Type></commontype>
+             <strength><Type>	UINT16	</Type></strength>
+             <archeology><Type>	UINT16	</Type></archeology>
+             <def><Type>	UINT16	</Type></def>
+             <dodge><Type>	UINT16	</Type></dodge>
+             <exp><Type>	UINT16	</Type></exp>
+             <digpower><Type>	UINT16	</Type></digpower>
+             <attack><Type>	UINT16	</Type></attack>
         </Properties>
-    </BATTLEOBJ>
+    </ASSIST>
 
     
 	<ROLE>
@@ -58,7 +87,7 @@
             <info><Type>	PLAYER	</Type></info>
             <equips> <Type> ARRAY <of> EQUIP </of></Type></equips>
             <bggrids><Type> ARRAY <of> BGGRID </of></Type></bggrids>
-            <assits><Type> ARRAY <of> BATTLEOBJ </of></Type></assits>
+            <assists><Type> ARRAY <of> ASSIST </of></Type></assists>
             <money><Type>	UINT32	</Type></money>
          </Properties>
     </ROLE>
