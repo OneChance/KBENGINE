@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import KBEngine
+import random
 from ROLE import TROLE
 from ASSIST import *
 from PLAYER import TPLAYER
@@ -58,7 +59,7 @@ class Account(KBEngine.Proxy):
 
         self.addExp(playerInfoDict, 0, [], 0)
         player = TPLAYER().createFromDict(playerInfoDict)
-        role.extend([0, player, [], [], [], 5000])
+        role.extend([0, player, [], [], [], 5000, []])
         self.roles[0] = role
 
         self.writeToDB()
@@ -141,9 +142,9 @@ class Account(KBEngine.Proxy):
 
             if (dbid == 1):
                 toList.append(self.roles[0][1][0])
-            elif(dbid<5):
+            elif (dbid < 5):
                 for i in range(0, len(ass)):
-                    if(ass[i].asDict()["dbid"]==dbid):
+                    if (ass[i].asDict()["dbid"] == dbid):
                         toList.append(ass[i])
                         break
 
@@ -541,8 +542,122 @@ class Account(KBEngine.Proxy):
                     bggrids.remove(bagInfo)
                 break
 
-
         return "ok"
+
+    def recordScene(self, tomb_id, floor_id, floorInfo):
+
+        tombs = self.roles[0][6]
+
+        floor = None
+        tomb = None
+
+        for i in range(0, len(tombs)):
+
+            if (tombs[i][0] == tomb_id):
+
+                tomb = tombs[i]
+
+                floors = tombs[i][1]
+
+                for j in range(0, len(floors)):
+
+                    if (floors[j][0] == floor_id):
+                        floors[j] = floorInfo
+                        floor = floors[j];
+                        break
+
+        if (floor == None):
+
+            if (tomb != None):
+                tomb[1].append(floorInfo)
+            else:
+                tomb = TTOMB()
+                tomb.extend([tomb_id, [floorInfo]])
+                tombs.append(tomb)
+
+        """ERROR_MSG("floorInfo = %r" % floorInfo)"""
+
+        self.writeToDB()
+
+    def startDig(self, tomb_id, floor_id, digInfo):
+
+        digMsg = "ok"
+
+        tombs = self.roles[0][6]
+
+        for i in range(0, len(tombs)):
+
+            if (tombs[i][0] == tomb_id):
+
+                floors = tombs[i][1]
+
+                for j in range(0, len(floors)):
+
+                    if (floors[j][0] == floor_id):
+
+                        digs = floors[j][4]
+
+                        currentDig = None
+
+                        for k in range(0, len(digs)):
+
+                            if (digs[k][0] == digInfo[0]):
+                                currentDig = digs[k]
+                                break
+
+                        if (currentDig == None):
+                            # 根据当前层数,随机生成深度
+                            minDeep = tomb_id * 20 + floor_id * 10
+                            maxDeep = tomb_id * 30 + floor_id * 20
+                            digInfo[4] = random.randint(minDeep, maxDeep)
+
+                            digs.append(digInfo)
+
+                            currentDig = digs[len(digs) - 1]
+
+                        # 开始挖掘
+                        # 计算总挖掘力量
+                        sumDigPower = 0;
+
+                        if (self.roles[0][1].asDict()["stamina"] > 0):
+                            sumDigPower = sumDigPower + self.roles[0][1].asDict()["digpower"]
+
+                        for a in range(0, len(self.roles[0][4])):
+                            if (self.roles[0][4][a].asDict()["stamina"] > 0):
+                                sumDigPower = sumDigPower + self.roles[0][4][a].asDict()["digpower"]
+
+                        if (sumDigPower == 0):
+                            digMsg = "NOSTAMINA"
+                            self.client.onDigUpdated(digInfo, TTROLE(), digMsg)
+                        else:
+                            currentDig[5] = currentDig[5] + sumDigPower
+
+                            if (currentDig[5] > (currentDig[6] + 1) * (int)(currentDig[4] * 0.3333)):
+                                currentDig[6] = currentDig[6] + 1
+
+                            ERROR_MSG("tex value=%r" % (currentDig[6]))
+
+                            # 扣除体能
+                            self.roles[0][1][0][1] = max(0, self.roles[0][1][0][1] - 3)
+                            for a in range(0, len(self.roles[0][4])):
+                                self.roles[0][4][a][1] = max(0, self.roles[0][4][a][1] - 3)
+
+                            """
+                            # 值回传需要的数据
+                            roleBack = TROLE()
+                            roleBack[1][0][1] = self.roles[0][1][0][1]
+
+                            for a in range(0, len(self.roles[0][4])):
+                                assist = TASSIST()
+                                assist[1] = self.roles[0][4][a][1]
+                                roleBack[4].append(assist)
+                            """
+
+                            self.client.onDigUpdated(currentDig, self.roles[0], digMsg)
+
+                        break
+
+        self.writeToDB()
 
     def onTimer(self, id, userArg):
         """

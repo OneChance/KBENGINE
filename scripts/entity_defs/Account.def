@@ -43,6 +43,12 @@
           <Arg>ROLE</Arg>
           <Arg>UNICODE</Arg>
         </onAssistOperOver>
+
+        <onDigUpdated>
+          <Arg>ELEMENTDATA</Arg>
+          <Arg>ROLE</Arg>
+          <Arg>UNICODE</Arg>
+        </onDigUpdated>
 	</ClientMethods>
 
 	<BaseMethods>
@@ -89,6 +95,20 @@
           <Arg>	UINT16	</Arg>
           <Arg>	UINT16	</Arg>
         </assistOper>
+
+        <recordScene>
+          <Exposed/>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+          <Arg>FLOOR</Arg>
+        </recordScene>
+
+        <startDig>
+          <Exposed/>
+          <Arg>	UINT16	</Arg>
+          <Arg>	UINT16	</Arg>
+          <Arg>ELEMENTDATA</Arg>
+        </startDig>
     
 	</BaseMethods>
 

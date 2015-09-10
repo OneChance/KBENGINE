@@ -14,16 +14,17 @@ class TROLE(list):
 		data = {
 			"dbid": self[0],
 			"info": self[1],
-			"equips": self[2],
+		    "equips": self[2],
 			"bggrids": self[3],
 			"assists": self[4],
-			"money":self[5],
+		    "money": self[5],
+		    "tombs": self[6],
 		}
 		
 		return data
 
 	def createFromDict(self, dictData):
-		self.extend([dictData["dbid"],dictData["info"],dictData["equips"],dictData["bggrids"],dictData["assists"],dictData["money"]])
+		self.extend([dictData["dbid"],dictData["info"],dictData["equips"],dictData["bggrids"],dictData["assists"],dictData["money"],dictData["tombs"]])
 		return self
 		
 class ROLE_PICKLER:

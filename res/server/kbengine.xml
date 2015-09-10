@@ -21,4 +21,18 @@
 	<baseapp>
 		<backupPeriod> 500 </backupPeriod>
 	</baseapp>
+
+	<windowOverflow>
+		<receive>
+			<messages>
+				<critical>	24			</critical>
+				<internal>	65535		</internal>
+				<external>	32			</external>
+			</messages>
+			<bytes>
+				<internal>	0			</internal>
+				<external>	10240		</external>
+			</bytes>
+		</receive>
+	</windowOverflow>
 </root>

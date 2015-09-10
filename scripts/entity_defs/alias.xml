@@ -78,7 +78,54 @@
         </Properties>
     </ASSIST>
 
-    
+    <MYVECTOR3>
+    FIXED_DICT
+    <implementedBy>TOMB.vector_inst</implementedBy>
+        <Properties>
+             <x><Type>	DOUBLE	</Type></x>
+             <y><Type>	DOUBLE	</Type></y>
+             <z><Type>	DOUBLE	</Type></z>
+        </Properties>
+    </MYVECTOR3>
+
+    <ELEMENTDATA>
+    FIXED_DICT
+    <implementedBy>TOMB.elementdata_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <vecs><Type> ARRAY <of> MYVECTOR3 </of></Type></vecs>
+             <objname><Type>UNICODE</Type></objname>
+             <order><Type>	UINT16	</Type></order>
+             <dig_deep><Type>UINT16</Type></dig_deep>
+             <dig_currentDeep><Type>UINT16</Type></dig_currentDeep>
+             <dig_texture><Type>UINT16</Type></dig_texture>
+        </Properties>
+    </ELEMENTDATA>
+
+    <FLOOR>
+    FIXED_DICT
+    <implementedBy>TOMB.floor_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <grounds> <Type> ARRAY <of> ELEMENTDATA </of></Type></grounds>
+             <gitems> <Type> ARRAY <of> ELEMENTDATA </of></Type></gitems>
+             <genemys> <Type> ARRAY <of> ELEMENTDATA </of></Type></genemys>
+             <gdigs> <Type> ARRAY <of> ELEMENTDATA </of></Type></gdigs>
+             <entrys> <Type> ARRAY <of> ELEMENTDATA </of></Type></entrys>
+             <digtonextpos> <Type>MYVECTOR3</Type></digtonextpos>
+             <istomb><Type>	UINT16	</Type></istomb>
+        </Properties>
+    </FLOOR>
+
+    <TOMB>
+    FIXED_DICT
+    <implementedBy>TOMB.tomb_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <floors> <Type> ARRAY <of> FLOOR </of></Type></floors>
+        </Properties>
+    </TOMB>
+
 	<ROLE>
     FIXED_DICT
     <implementedBy>ROLE.role_inst</implementedBy>
@@ -89,6 +136,7 @@
             <bggrids><Type> ARRAY <of> BGGRID </of></Type></bggrids>
             <assists><Type> ARRAY <of> ASSIST </of></Type></assists>
             <money><Type>	UINT32	</Type></money>
+            <tombs><Type> ARRAY <of> TOMB </of></Type></tombs>
          </Properties>
     </ROLE>
 
@@ -96,9 +144,7 @@
     FIXED_DICT
     <implementedBy>ROLE.role_list_inst</implementedBy><Properties><values><Type>
           ARRAY <of> ROLE </of></Type></values></Properties></ROLE_LIST>
-          
-          
-          
+
           
 	<ITEM>
     FIXED_DICT
@@ -136,6 +182,24 @@
         </Properties>
     </ITEM_LIST>
 
+    <TOMBINFO>
+    FIXED_DICT
+    <implementedBy>TOMB.tombinfo_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <level><Type>UINT16</Type></level>
+             <name><Type>UNICODE</Type></name>
+        </Properties>
+    </TOMBINFO>
+
+    <TOMBINFO_LIST>
+    FIXED_DICT
+    <implementedBy>TOMB.tombinfo_list_inst</implementedBy>
+        <Properties>
+            <values><Type>ARRAY <of> TOMBINFO </of></Type></values>
+        </Properties>
+    </TOMBINFO_LIST>
+
 	<SHOPITEM>
     FIXED_DICT
     <implementedBy>SHOPITEM.shopitem_inst</implementedBy><Properties><dbid><Type>	DBID	</Type></dbid><iid><Type>	UINT16	</Type></iid></Properties></SHOPITEM>
@@ -143,4 +207,6 @@
     FIXED_DICT
     <implementedBy>SHOPITEM.shopitem_list_inst</implementedBy><Properties><values><Type>
           ARRAY <of> SHOPITEM </of></Type></values></Properties></SHOPITEM_LIST>
+
+
 </root>

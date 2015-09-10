@@ -33,6 +33,13 @@
           <Default></Default>
           <Persistent>true</Persistent>
         </assistshop>
+
+        <tombs>
+          <Type>TOMBINFO_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </tombs>
         
 	</Properties>
 
@@ -43,6 +50,7 @@
           <Arg>SHOPITEM_LIST</Arg>
           <Arg>SHOPITEM_LIST</Arg>
           <Arg>SHOPITEM_LIST</Arg>
+          <Arg>TOMBINFO_LIST</Arg>
         </onReqItemList>
 	</ClientMethods>
 

@@ -5,6 +5,7 @@ from PLAYER import TPLAYER
 from KBEDebug import *
 from ITEM import TITEMList
 from SHOPITEM import TSHOPITEMList
+from TOMB import *
 
 class Gdata(KBEngine.Proxy):
 
@@ -25,9 +26,9 @@ class Gdata(KBEngine.Proxy):
 	def onGetData(self, baseRef, dbid, wasActive):
 		gdataEntity = KBEngine.entities.get(baseRef.id);
 		if(self.DATAVERSION < gdataEntity.version):
-			self.client.onReqItemList(self.items,self.itemshop,self.assistshop,self.equipshop)
+			self.client.onReqItemList(self.items,self.itemshop,self.assistshop,self.equipshop,self.tombs)
 		else:
-			self.client.onReqItemList(TITEMList(),TSHOPITEMList(),TSHOPITEMList())
+			self.client.onReqItemList(TITEMList(),TSHOPITEMList(),TSHOPITEMList(),TTOMBINFOList())
 
 		self.giveClientTo(self.accountEntity)
 		
