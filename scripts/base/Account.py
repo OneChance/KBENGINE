@@ -334,6 +334,8 @@ class Account(KBEngine.Proxy):
 
         self.client.onEquipOperOver(self.roles[0], equipres)
 
+
+    #level:佣兵等级
     def tradeItem(self, iid, tradeType, num, dbid, level):
 
         traderes = "ok"
@@ -615,49 +617,150 @@ class Account(KBEngine.Proxy):
 
                             currentDig = digs[len(digs) - 1]
 
-                        # 开始挖掘
-                        # 计算总挖掘力量
-                        sumDigPower = 0;
 
-                        if (self.roles[0][1].asDict()["stamina"] > 0):
-                            sumDigPower = sumDigPower + self.roles[0][1].asDict()["digpower"]
-
-                        for a in range(0, len(self.roles[0][4])):
-                            if (self.roles[0][4][a].asDict()["stamina"] > 0):
-                                sumDigPower = sumDigPower + self.roles[0][4][a].asDict()["digpower"]
-
-                        if (sumDigPower == 0):
-                            digMsg = "NOSTAMINA"
-                            self.client.onDigUpdated(digInfo, TTROLE(), digMsg)
+                        if(currentDig[5] >= currentDig[4]):
+                            digMsg = "DIGOVER"
                         else:
-                            currentDig[5] = currentDig[5] + sumDigPower
+                            # 开始挖掘
+                            # 计算总挖掘力量
+                            sumDigPower = 0;
 
-                            if (currentDig[5] > (currentDig[6] + 1) * (int)(currentDig[4] * 0.3333)):
-                                currentDig[6] = currentDig[6] + 1
-
-                            ERROR_MSG("tex value=%r" % (currentDig[6]))
-
-                            # 扣除体能
-                            self.roles[0][1][0][1] = max(0, self.roles[0][1][0][1] - 3)
-                            for a in range(0, len(self.roles[0][4])):
-                                self.roles[0][4][a][1] = max(0, self.roles[0][4][a][1] - 3)
-
-                            """
-                            # 值回传需要的数据
-                            roleBack = TROLE()
-                            roleBack[1][0][1] = self.roles[0][1][0][1]
+                            if (self.roles[0][1].asDict()["stamina"] > 0):
+                                sumDigPower = sumDigPower + self.roles[0][1].asDict()["digpower"]
 
                             for a in range(0, len(self.roles[0][4])):
-                                assist = TASSIST()
-                                assist[1] = self.roles[0][4][a][1]
-                                roleBack[4].append(assist)
-                            """
+                                if (self.roles[0][4][a].asDict()["stamina"] > 0):
+                                    sumDigPower = sumDigPower + self.roles[0][4][a].asDict()["digpower"]
 
-                            self.client.onDigUpdated(currentDig, self.roles[0], digMsg)
+                            if (sumDigPower == 0):
+                                digMsg = "NOSTAMINA"
+                                self.client.onDigUpdated(digInfo, TTROLE(), digMsg)
+                            else:
+                                currentDig[5] = currentDig[5] + sumDigPower
+
+                                if (currentDig[5] > (currentDig[6] + 1) * (int)(currentDig[4] * 0.3333)):
+                                    currentDig[6] = min(2, currentDig[6] + 1)
+
+                                #当前深度大于等于总深度
+                                if(currentDig[5] >= currentDig[4]):
+                                    digPosX = currentDig.asDict()["vecs"][0].asDict()["x"];
+                                    digPosY = currentDig.asDict()["vecs"][0].asDict()["y"];
+
+                                    entryX = floors[j][5][0].asDict()["vecs"][0].asDict()["x"];
+                                    entryY = floors[j][5][0].asDict()["vecs"][0].asDict()["y"];
+
+                                    entryRadius = 3
+
+                                    if (digPosX < (entryX + entryRadius) and digPosX > (entryX - entryRadius) and
+                                        digPosY < (entryY + entryRadius) and digPosY > (entryY - entryRadius)):
+                                        #挖掘地点在入口半径之内
+                                        currentDig[6] = 3
+                                        floors[j][6] = currentDig.asDict()["vecs"][0]
+                                    else:
+                                        digMsg = self.itemFall(''.join([str(tomb_id),'@',str(floor_id),'@dig']))
+
+
+                                # 扣除体能
+                                self.roles[0][1][0][1] = max(0, self.roles[0][1][0][1] - 3)
+
+                                for a in range(0, len(self.roles[0][4])):
+                                    self.roles[0][4][a][1] = max(0, self.roles[0][4][a][1] - 3)
+
+                                """
+                                # 值回传需要的数据
+                                roleBack = TROLE()
+                                roleBack[1][0][1] = self.roles[0][1][0][1]
+
+                                for a in range(0, len(self.roles[0][4])):
+                                    assist = TASSIST()
+                                    assist[1] = self.roles[0][4][a][1]
+                                    roleBack[4].append(assist)
+                                """
+
+                        self.client.onDigUpdated(currentDig, self.roles[0], digMsg)
 
                         break
 
         self.writeToDB()
+
+
+    #根据key获取掉落列表
+    def getFallListByKey(self,key):
+        itemList = []
+        fallList = self.gdata.fallitems.asDict()["values"]
+        for i in range(0, len(fallList)):
+
+            if(fallList[i].asDict()["key"] == key):
+                itemList.append(fallList[i])
+
+        return itemList
+
+
+    #随机事件是否发生
+    def randomHappen(self,probability,range):
+
+        samples = random.randint(1, range)
+
+        if (samples < probability):
+            return True
+        else:
+            return False
+
+    def itemFall (self,key):
+
+        """
+        :param key: 根据这个字段取可掉落的物品
+        :return:
+        """
+
+        itemList = self.getFallListByKey(key)
+        itemGet = ''
+
+        for i in range(0, len(itemList)):
+
+            if (self.randomHappen (itemList[i].asDict()["probability"], 101)):
+
+                num =  random.randint(itemList[i].asDict()["minnum"], itemList[i].asDict()["maxnum"])
+
+                if(num>0):
+                    itemGet = ''.join([str(itemList[i].asDict()["itemid"]),'@',str(num),'.'])
+
+                itemInfo = self.getItemById(itemList[i].asDict()["itemid"])
+
+                if(itemInfo != None):
+                    #加入背包(如果是雇佣兵模式，道具由玩家获得，如果是玩家最对模式，道具将roll获取)
+                    #目前先实现直接放入背包
+
+                    self.addItem(itemInfo.asDict(),num,itemInfo.asDict()["level"])
+
+        if (itemGet == ''):
+            return "DIGNOTHING"
+        else:
+            return itemGet
+
+
+	#根据item_id获取物品
+    def getItemById(self,id):
+
+        itemList = self.gdata.items.asDict()["values"]
+
+        for i in range(0, len(itemList)):
+            if(itemList[i].asDict()["dbid"] == id):
+                return itemList[i]
+
+        return None
+
+    def playerMove(self, dir):
+
+        #dir用于返回给队伍里的其他玩家
+
+        #扣除体力
+        self.roles[0][1][0][1] = max(0, self.roles[0][1][0][1] - 1)
+
+        for a in range(0, len(self.roles[0][4])):
+             self.roles[0][4][a][1] = max(0, self.roles[0][4][a][1] - 1)
+
+        self.client.onPlayerMove(self.roles[0])
 
     def onTimer(self, id, userArg):
         """

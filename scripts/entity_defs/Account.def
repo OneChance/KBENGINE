@@ -49,6 +49,10 @@
           <Arg>ROLE</Arg>
           <Arg>UNICODE</Arg>
         </onDigUpdated>
+
+        <onPlayerMove>
+          <Arg>ROLE</Arg>
+        </onPlayerMove>
 	</ClientMethods>
 
 	<BaseMethods>
@@ -109,10 +113,15 @@
           <Arg>	UINT16	</Arg>
           <Arg>ELEMENTDATA</Arg>
         </startDig>
-    
+
+        <playerMove>
+          <Exposed/>
+          <Arg>	UINT16	</Arg>
+        </playerMove>
 	</BaseMethods>
 
 	<CellMethods>
+
 	</CellMethods>
 
 </root>

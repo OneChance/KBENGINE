@@ -12,6 +12,13 @@
           <Default></Default>
           <Persistent>true</Persistent>
         </items>
+
+        <fallitems>
+          <Type>FALLITEM_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </fallitems>
         
         <itemshop>
           <Type>SHOPITEM_LIST</Type>

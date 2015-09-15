@@ -182,6 +182,27 @@
         </Properties>
     </ITEM_LIST>
 
+    <FALLITEM>
+    FIXED_DICT
+    <implementedBy>ITEM.fallitem_inst</implementedBy>
+        <Properties>
+            <dbid><Type>	DBID	</Type></dbid>
+            <key><Type>	UNICODE	</Type></key>
+            <itemid><Type>	DBID	</Type></itemid>
+            <minnum><Type>	UINT16	</Type></minnum>
+            <maxnum><Type>	UINT16	</Type></maxnum>
+            <probability><Type>	UINT16	</Type></probability>
+        </Properties>
+    </FALLITEM>
+
+    <FALLITEM_LIST>
+    FIXED_DICT
+    <implementedBy>ITEM.fallitem_list_inst</implementedBy>
+        <Properties>
+            <values><Type>ARRAY <of> FALLITEM </of></Type></values>
+        </Properties>
+    </FALLITEM_LIST>
+
     <TOMBINFO>
     FIXED_DICT
     <implementedBy>TOMB.tombinfo_inst</implementedBy>

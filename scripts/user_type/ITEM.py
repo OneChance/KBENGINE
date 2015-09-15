@@ -96,3 +96,81 @@ class ITEM_LIST_PICKLER:
 		return isinstance(obj, TITEMList)
 
 item_list_inst = ITEM_LIST_PICKLER()
+
+
+class TFALLITEM(list):
+	"""
+	"""
+	def __init__(self):
+		"""
+		"""
+		list.__init__(self)
+
+	def asDict(self):
+		data = {
+			"dbid": self[0],
+			"key": self[1],
+			"itemid": self[2],
+			"minnum": self[3],
+			"maxnum": self[4],
+			"probability": self[5],
+		}
+
+		return data
+
+	def createFromDict(self, dictData):
+		self.extend([dictData["dbid"],dictData["key"],dictData["itemid"],dictData["minnum"],dictData["maxnum"],dictData["probability"]])
+		return self
+
+class FALLITEM_PICKLER:
+	def __init__(self):
+		pass
+
+	def createObjFromDict(self, dct):
+		return TFALLITEM().createFromDict(dct)
+
+	def getDictFromObj(self, obj):
+		return obj.asDict()
+
+	def isSameType(self, obj):
+		return isinstance(obj, TFALLITEM)
+
+fallitem_inst = FALLITEM_PICKLER()
+
+class TFALLITEMList(dict):
+	"""
+	"""
+	def __init__(self):
+		"""
+		"""
+		dict.__init__(self)
+
+	def asDict(self):
+		datas = []
+		dct = {"values" : datas}
+
+		for key, val in self.items():
+			datas.append(val)
+
+		return dct
+
+	def createFromDict(self, dictData):
+		for data in dictData["values"]:
+			self[data[0]] = data
+		return self
+
+class FALLITEM_LIST_PICKLER:
+	def __init__(self):
+		pass
+
+	def createObjFromDict(self, dct):
+		return TFALLITEMList().createFromDict(dct)
+
+	def getDictFromObj(self, obj):
+		return obj.asDict()
+
+	def isSameType(self, obj):
+		return isinstance(obj, TFALLITEMList)
+
+fallitem_list_inst = FALLITEM_LIST_PICKLER()
+
