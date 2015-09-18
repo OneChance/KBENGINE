@@ -55,8 +55,8 @@ class TELEMENTDATA(list):
         return data
 
     def createFromDict(self, dictData):
-        self.extend([dictData["dbid"], dictData["vecs"], dictData["objname"], dictData["order"],dictData["dig_deep"],
-                     dictData["dig_currentDeep"],dictData["dig_texture"]])
+        self.extend([dictData["dbid"], dictData["vecs"], dictData["objname"], dictData["order"], dictData["dig_deep"],
+                     dictData["dig_currentDeep"], dictData["dig_texture"]])
         return self
 
 
@@ -243,4 +243,82 @@ tombinfo_list_inst = TOMBINFO_LIST_PICKLER()
 
 ###############################################################################################
 
+class TENEMYTYPE(list):
+    def __init__(self):
+        list.__init__(self)
 
+    def asDict(self):
+        data = {
+            "dbid": self[0],
+            "key": self[1],
+            "enemyid": self[2],
+        }
+
+        return data
+
+    def createFromDict(self, dictData):
+        self.extend([dictData["dbid"], dictData["key"], dictData["enemyid"]])
+        return self
+
+
+class ENEMYTYPE_PICKLER:
+    def __init__(self):
+        pass
+
+    def createObjFromDict(self, dct):
+        return TENEMYTYPE().createFromDict(dct)
+
+    def getDictFromObj(self, obj):
+        return obj.asDict()
+
+    def isSameType(self, obj):
+        return isinstance(obj, TENEMYTYPE)
+
+
+enemytype_inst = ENEMYTYPE_PICKLER()
+
+
+######################################################################################################
+
+class TENEMYTYPEList(dict):
+    """
+    """
+
+    def __init__(self):
+        """
+        """
+        dict.__init__(self)
+
+    def asDict(self):
+        datas = []
+        dct = {"values": datas}
+
+        for key, val in self.items():
+            datas.append(val)
+
+        return dct
+
+    def createFromDict(self, dictData):
+        for data in dictData["values"]:
+            self[data[0]] = data
+        return self
+
+
+class ENEMYTYPE_LIST_PICKLER:
+    def __init__(self):
+        pass
+
+    def createObjFromDict(self, dct):
+        return TENEMYTYPEList().createFromDict(dct)
+
+    def getDictFromObj(self, obj):
+        return obj.asDict()
+
+    def isSameType(self, obj):
+        return isinstance(obj, TENEMYTYPEList)
+
+
+enemytype_list_inst = ENEMYTYPE_LIST_PICKLER()
+
+
+###############################################################################################

@@ -53,6 +53,34 @@
         <onPlayerMove>
           <Arg>ROLE</Arg>
         </onPlayerMove>
+
+        <OnGetSceneData>
+          <Arg>ARRAY <of> UINT16 </of></Arg>
+        </OnGetSceneData>
+
+        <OnGetBattleData>
+          <Arg>ROLE</Arg>
+          <Arg>ARRAY<of>BGGRID</of></Arg>
+        </OnGetBattleData>
+
+        <OnBattleAnim>
+          <Arg>UINT16</Arg>
+        </OnBattleAnim>
+
+        <onAddOp>
+          <Arg>UINT16</Arg>
+        </onAddOp>
+
+        <onUndoOp>
+          <Arg>UNICODE</Arg>
+        </onUndoOp>
+
+        <battleOver>
+          <Arg>UNICODE</Arg>
+          <Arg>PLAYER</Arg>
+          <Arg>ARRAY<of>ASSIST</of></Arg>
+        </battleOver>
+
 	</ClientMethods>
 
 	<BaseMethods>
@@ -118,6 +146,29 @@
           <Exposed/>
           <Arg>	UINT16	</Arg>
         </playerMove>
+
+        <getSceneData>
+          <Exposed/>
+          <Arg>	UNICODE </Arg>
+        </getSceneData>
+
+        <getBattleData>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </getBattleData>
+
+        <addOp>
+          <Exposed/>
+          <Arg>	UNICODE </Arg>
+          <Arg>	UNICODE </Arg>
+          <Arg>	UINT16 </Arg>
+        </addOp>
+
+        <undoOp>
+          <Exposed/>
+        </undoOp>
+
+
 	</BaseMethods>
 
 	<CellMethods>

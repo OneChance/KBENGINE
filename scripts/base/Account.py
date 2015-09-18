@@ -11,6 +11,8 @@ from BGGRID import *
 from PROINFO import *
 from EQUIP import *
 from ItemFactory import *
+from BATTLE import *
+import time
 
 
 class Account(KBEngine.Proxy):
@@ -72,6 +74,7 @@ class Account(KBEngine.Proxy):
         res = self.expLevel(playerInfoDict["exp"], level)
 
         if (res["level"] > level):
+            playerInfoDict["exp"] = res["exp"]
             playerInfoDict["level"] = res["level"]
             self.levelUp(playerInfoDict, equips, iid)
 
@@ -93,7 +96,12 @@ class Account(KBEngine.Proxy):
 
         iList = self.gdata.items
 
-        pro = ProFactory.getPro(playerInfoDict["pro"], self.gdata, iid)
+        proname = ""
+
+        if(iid==0):
+            proname = playerInfoDict["pro"]
+
+        pro = ProFactory.getPro(proname, self.gdata, iid)
 
         level = playerInfoDict["level"]
 
@@ -127,26 +135,55 @@ class Account(KBEngine.Proxy):
 
         return playerInfoDict
 
+    def fromTagExplain(self,fromTag):
+        ass = self.roles[0][4]
+        enemyList = self.roles[0][7]
+        dbid = int(fromTag)
+
+        if (dbid == 1):
+            fromBo = self.roles[0][1]
+        elif (dbid < 5):
+            for i in range(0, len(ass)):
+                if (ass[i].asDict()["dbid"] == dbid):
+                    fromBo = ass[i]
+                    break
+        else:
+            for i in range(0, len(enemyList)):
+                if (enemyList[i].asDict()["dbid"] == dbid):
+                    fromBo = enemyList[i]
+                    break
+
+        return fromBo
+
+
     def toTagExplain(self, toTag):
         toList = []
         ass = self.roles[0][4]
+        enemyList = self.roles[0][7]
 
-        if (toTag == 'ALLTEAM'):
-            toList.append(self.roles[0][1][0])  # roles[0]->role   role[1]->player  player[0]->playerDict
-            for i in range(0, len(ass)):
-                toList.append(ass[i])
-        elif (toTag == 'ALLENEMY'):
-            ERROR_MSG("NOT IMPLEMENT")
-        else:
-            dbid = int(toTag)
-
-            if (dbid == 1):
-                toList.append(self.roles[0][1][0])
-            elif (dbid < 5):
+        if(toTag != ""):
+            if (toTag == 'ALLTEAM'):
+                toList.append(self.roles[0][1])  # roles[0]->role   role[1]->player  player[0]->playerDict
                 for i in range(0, len(ass)):
-                    if (ass[i].asDict()["dbid"] == dbid):
-                        toList.append(ass[i])
-                        break
+                    toList.append(ass[i])
+            elif (toTag == 'ALLENEMY'):
+                for i in range(0, len(enemyList)):
+                    toList.append(enemyList[i])
+            else:
+                dbid = int(toTag)
+
+                if (dbid == 1):
+                    toList.append(self.roles[0][1])
+                elif (dbid < 5):
+                    for i in range(0, len(ass)):
+                        if (ass[i].asDict()["dbid"] == dbid):
+                            toList.append(ass[i])
+                            break
+                else:
+                    for i in range(0, len(enemyList)):
+                        if (enemyList[i].asDict()["dbid"] == dbid):
+                            toList.append(enemyList[i])
+                            break
 
         return toList
 
@@ -160,10 +197,11 @@ class Account(KBEngine.Proxy):
             if (bagInfo[0] == dbid):
                 itemInfo = iList[bagInfo[1]]
 
-                ERROR_MSG("itemInfo=%r" % (itemInfo));
-
+                fromBo = self.fromTagExplain(fromTag)
                 toList = self.toTagExplain(toTag)
-                ItemFactory.use(fromTag, toList, itemInfo)
+
+                ItemFactory.use(fromBo, toList, itemInfo)
+
                 self.removeItem(itemInfo.asDict(), 1, dbid)
                 self.writeToDB()
                 self.client.onUseItemOver(self.roles[0], useres)
@@ -393,6 +431,7 @@ class Account(KBEngine.Proxy):
         self.client.onTradeOver(self.roles[0], traderes)
 
     def setAssistDBID(self):
+
         assists = self.roles[0][4]
         for i in range(0, len(assists)):
             assists[i][0] = i + 2
@@ -577,8 +616,6 @@ class Account(KBEngine.Proxy):
                 tomb.extend([tomb_id, [floorInfo]])
                 tombs.append(tomb)
 
-        """ERROR_MSG("floorInfo = %r" % floorInfo)"""
-
         self.writeToDB()
 
     def startDig(self, tomb_id, floor_id, digInfo):
@@ -761,6 +798,202 @@ class Account(KBEngine.Proxy):
              self.roles[0][4][a][1] = max(0, self.roles[0][4][a][1] - 1)
 
         self.client.onPlayerMove(self.roles[0])
+
+    #获取主场景所需数据
+    def getSceneData(self,key):
+
+        enemyTypeList = []
+
+        typeList = self.gdata.enemytypes.asDict()["values"]
+
+        for e in range(0, len(typeList)):
+            if(typeList[e].asDict()["key"]==key):
+                enemyTypeList.append(typeList[e].asDict()["enemyid"])
+
+        self.client.OnGetSceneData(enemyTypeList)
+
+    #获取战斗场景所需数据
+    def getBattleData(self,enemyid):
+        iList = self.gdata.items
+
+        #生成敌人数量
+        enemy_num = random.randint(1, 3)
+
+        enemyList = []
+
+        for index in range(0, enemy_num):
+            enemy = TBATTLE_ENEMY()
+            enemy.extend([5+index, enemyid,
+                          iList[enemyid].asDict()["def"],
+                          iList[enemyid].asDict()["health"],
+                          iList[enemyid].asDict()["health"],
+                          iList[enemyid].asDict()["dodge"],
+                          iList[enemyid].asDict()["attack"],
+                          iList[enemyid].asDict()["price"]])
+            enemyList.append(enemy)
+
+        self.roles[0][7] = enemyList
+
+        if(self.roles[0][8] == None):
+            self.roles[0][8] = []
+
+        self.client.OnGetBattleData(self.roles[0],[])
+
+    def addOp(self,from_tag,to_tag,itemid):
+
+        opList = self.roles[0][8]
+        assistList = self.roles[0][4]
+
+        op = TBATTLE_OP()
+        op.extend([from_tag, to_tag, itemid])
+        opList.append(op)
+
+        self.client.onAddOp(len(self.roles[0][8]))
+
+        if(len(opList)==len(assistList)+1):
+            #战斗开始
+            self.battleStart()
+
+    def battleStart(self):
+
+        opList = self.roles[0][8]
+        iList = self.gdata.items
+        bggrids = self.roles[0][3]
+
+        self.addEnemyOp()
+
+        for i in range(0, len(opList)):
+
+           op = opList.pop(0)
+           fromBo = self.fromTagExplain(op.asDict()["from"])
+
+           if(fromBo.asDict()["health"]>0):
+
+               #通知客户端播放from动画
+               self.client.OnBattleAnim(op.asDict()["itemid"])
+
+               #留2秒给客户端播放动画
+               time.sleep(2)
+
+               #执行战斗命令
+               toList = self.toTagExplain(op.asDict()["to"])
+
+               itemid = op.asDict()["itemid"]
+
+               if(itemid>9000):
+                   #非背包道具(攻击，等待...)
+                   ItemFactory.use(fromBo, toList, iList[itemid])
+               else:
+                   for i in range(0, len(bggrids)):
+                       bagInfo = bggrids[i]
+                       if (bagInfo[0] == itemid):
+                           ItemFactory.use(fromBo, toList, iList[bagInfo[1]])
+                           self.removeItem(iList[bagInfo[1]].asDict(), 1, itemid)
+                           break
+
+
+               #通知客户端更新ui(血量 道具数量 变化)
+               self.writeToDB()
+
+               self.client.OnGetBattleData(self.roles[0],self.roles[0][3])
+
+               #间隔3秒后判断是否结束战斗
+               time.sleep(3)
+
+               #判断战斗是否结束
+               battleRes = self.getBattleRes()
+               if(battleRes!="goon"):
+                   if(battleRes=="win"):
+                       self.client.battleOver(battleRes,self.roles[0][1],self.roles[0][4])
+                   else:
+                       self.client.battleOver(battleRes,TPLAYER(),[])
+                   return
+
+
+
+    #获取战斗结果
+    def getBattleRes(self):
+        player = self.roles[0][1]
+        enemyList = self.roles[0][7]
+        assistList = self.roles[0][4]
+
+        enemyDie = True
+        playerDie = True
+
+        for i in range(0, len(enemyList)):
+            if(enemyList[i].asDict()["health"]>0):
+                enemyDie = False
+                break
+
+        if(player.asDict()["health"]>0):
+            playerDie = False
+        else:
+            for i in range(0, len(assistList)):
+                if(assistList[i].asDict()["health"]>0):
+                    playerDie = False
+                    break
+
+        if(enemyDie):
+
+            exp = enemyList[0].asDict()["exp"] * len(enemyList)
+
+            #玩家获取获取经验
+            playerInfoDict = self.roles[0][1].asDict()
+            self.addExp(playerInfoDict, exp,self.roles[0][2], 0)
+            info = TPLAYER().createFromDict(playerInfoDict)
+            self.roles[0][1] = info
+
+            #佣兵获取经验
+            for i in range(0, len(assistList)):
+                 assistInfoDict = assistList[i].asDict()
+                 self.addExp(assistInfoDict, exp,[], assistInfoDict["iid"])
+                 assist = TASSIST().createFromDict(assistInfoDict)
+                 assistList[i] = assist
+
+            #获取掉落物品
+
+            return "win"
+        elif(playerDie):
+            return "loose"
+        else:
+            return "goon"
+
+    #添加敌人战斗指令
+    def addEnemyOp(self):
+
+        opList = self.roles[0][8]
+
+        enemyList = self.roles[0][7]
+        assistList = self.roles[0][4]
+
+        #加入敌人攻击(暂时只实现普通攻击)
+        #简单AI，找血最少的打
+        toBo = self.roles[0][1]
+        toBo_dbid = '1'
+        for i in range(0, len(assistList)):
+            if(assistList[i].asDict()["health"]<toBo.asDict()["health"] and assistList[i].asDict()["health"]>0):
+                toBo = assistList[i]
+                toBo_dbid = str(toBo.asDict()["dbid"])
+
+        for i in range(0, len(enemyList)):
+
+            if(enemyList[i].asDict()["health"]>0):
+                op = TBATTLE_OP()
+                op.extend([enemyList[i].asDict()["dbid"], toBo_dbid, 9001])
+                opList.append(op)
+
+
+    def undoOp(self):
+
+        opList = self.roles[0][8]
+        assistList = self.roles[0][4]
+
+        if(len(opList)>0):
+            op = opList.pop(0)
+            self.client.onUndoOp(op.asDict()["from"])
+        else:
+            self.client.onUndoOp("")
+
 
     def onTimer(self, id, userArg):
         """

@@ -48,23 +48,16 @@ class Exorcist(pro):
 		self.digPower = strength
 
 class ProFactory:
+	@staticmethod
 	def getPro(proname,gdata,iid):
 
-		pro = None
+		if(iid>0):
+			assitInfo = gdata.items[iid]
+			proname = assitInfo.asDict()["pro"]
 
-		if(proname == 'Geomancer'):
-			pro = Geomancer()
-		elif(proname == 'Settler'):
-			pro = Settler()
-		elif(proname == 'Doctor'):
-			pro = Doctor()
-		elif(proname == 'Exorcist'):
-			pro = Exorcist()
-		else:
-			pro = None
+		pro = ProFactory.getProType(proname)
 
 		if(pro != None and iid >0):
-			assitInfo = gdata.items[iid]
 			pro.healthFactor = assitInfo.asDict()["health"]
 			pro.staminaFactor = assitInfo.asDict()["stamina"]
 			pro.strengthFactor = assitInfo.asDict()["strength"]
@@ -72,5 +65,18 @@ class ProFactory:
 			pro.defFactor = assitInfo.asDict()["def"]
 			pro.dodgeFactor = assitInfo.asDict()["dodge"]
 
-
 		return pro
+
+	@staticmethod
+	def getProType(proname):
+
+		if(proname == 'Geomancer'):
+			return Geomancer()
+		elif(proname == 'Settler'):
+			return Settler()
+		elif(proname == 'Doctor'):
+			return Doctor()
+		elif(proname == 'Exorcist'):
+			return Exorcist()
+		else:
+			return None

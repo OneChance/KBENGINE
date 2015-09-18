@@ -19,12 +19,14 @@ class TROLE(list):
 			"assists": self[4],
 		    "money": self[5],
 		    "tombs": self[6],
+			"battle_enemys": self[7],
+			"battle_ops": self[8],
 		}
 		
 		return data
 
 	def createFromDict(self, dictData):
-		self.extend([dictData["dbid"],dictData["info"],dictData["equips"],dictData["bggrids"],dictData["assists"],dictData["money"],dictData["tombs"]])
+		self.extend([dictData["dbid"],dictData["info"],dictData["equips"],dictData["bggrids"],dictData["assists"],dictData["money"],dictData["tombs"],dictData["battle_enemys"],dictData["battle_ops"]])
 		return self
 		
 class ROLE_PICKLER:

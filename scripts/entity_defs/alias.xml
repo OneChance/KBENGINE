@@ -126,6 +126,31 @@
         </Properties>
     </TOMB>
 
+    <BATTLE_ENEMY>
+    FIXED_DICT
+    <implementedBy>BATTLE.enemy_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <enemyid><Type>UINT16</Type></enemyid>
+             <def><Type>UINT16</Type></def>
+             <health><Type>UINT16</Type></health>
+             <maxhealth><Type>UINT16</Type></maxhealth>
+             <dodge><Type>UINT16</Type></dodge>
+             <attack><Type>UINT16</Type></attack>
+             <exp><Type>UINT16</Type></exp>
+        </Properties>
+    </BATTLE_ENEMY>
+
+    <BATTLE_OP>
+    FIXED_DICT
+    <implementedBy>BATTLE.op_inst</implementedBy>
+        <Properties>
+             <from><Type>UNICODE</Type></from>
+             <to><Type>UNICODE</Type></to>
+             <itemid><Type>UINT16</Type></itemid>
+        </Properties>
+    </BATTLE_OP>
+
 	<ROLE>
     FIXED_DICT
     <implementedBy>ROLE.role_inst</implementedBy>
@@ -137,6 +162,9 @@
             <assists><Type> ARRAY <of> ASSIST </of></Type></assists>
             <money><Type>	UINT32	</Type></money>
             <tombs><Type> ARRAY <of> TOMB </of></Type></tombs>
+
+            <battle_enemys><Persistent>false</Persistent><Type> ARRAY <of> BATTLE_ENEMY </of></Type></battle_enemys>
+            <battle_ops><Persistent>false</Persistent><Type> ARRAY <of> BATTLE_OP </of></Type></battle_ops>
          </Properties>
     </ROLE>
 
@@ -229,5 +257,21 @@
     <implementedBy>SHOPITEM.shopitem_list_inst</implementedBy><Properties><values><Type>
           ARRAY <of> SHOPITEM </of></Type></values></Properties></SHOPITEM_LIST>
 
+    <ENEMYTYPE>
+    FIXED_DICT
+    <implementedBy>TOMB.enemytype_inst</implementedBy>
+        <Properties>
+            <dbid><Type>	DBID	</Type></dbid>
+            <key><Type>	UNICODE	</Type></key>
+            <enemyid><Type>	DBID	</Type></enemyid>
+        </Properties>
+    </ENEMYTYPE>
 
+    <ENEMYTYPE_LIST>
+    FIXED_DICT
+    <implementedBy>TOMB.enemytype_list_inst</implementedBy>
+        <Properties>
+            <values><Type>ARRAY <of> ENEMYTYPE </of></Type></values>
+        </Properties>
+    </ENEMYTYPE_LIST>
 </root>

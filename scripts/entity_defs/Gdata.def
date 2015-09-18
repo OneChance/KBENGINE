@@ -19,6 +19,13 @@
           <Default></Default>
           <Persistent>true</Persistent>
         </fallitems>
+
+        <enemytypes>
+          <Type>ENEMYTYPE_LIST</Type>
+          <Flags>BASE</Flags>
+          <Default></Default>
+          <Persistent>true</Persistent>
+        </enemytypes>
         
         <itemshop>
           <Type>SHOPITEM_LIST</Type>
