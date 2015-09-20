@@ -84,3 +84,38 @@ class BATTLE_OP_PICKLER:
 
 
 op_inst = BATTLE_OP_PICKLER()
+
+######################################################################################################
+
+class TBATTLE_OBJ(list):
+    def __init__(self):
+        list.__init__(self)
+
+    def asDict(self):
+        data = {
+            "dbid": self[0],
+            "health": self[1],
+        }
+
+        return data
+
+    def createFromDict(self, dictData):
+        self.extend([dictData["dbid"], dictData["health"]])
+        return self
+
+
+class BATTLE_OBJ_PICKLER:
+    def __init__(self):
+        pass
+
+    def createObjFromDict(self, dct):
+        return TBATTLE_OBJ().createFromDict(dct)
+
+    def getDictFromObj(self, obj):
+        return obj.asDict()
+
+    def isSameType(self, obj):
+        return isinstance(obj, TBATTLE_OBJ)
+
+
+bo_inst = BATTLE_OBJ_PICKLER()

@@ -59,12 +59,18 @@
         </OnGetSceneData>
 
         <OnGetBattleData>
-          <Arg>ROLE</Arg>
-          <Arg>ARRAY<of>BGGRID</of></Arg>
+          <Arg>ARRAY<of>BATTLE_ENEMY</of></Arg>
         </OnGetBattleData>
+
+        <OnOpExe>
+          <Arg>ARRAY<of>BATTLE_OBJ</of></Arg>
+          <Arg>ARRAY<of>BGGRID</of></Arg>
+          <Arg>UINT16</Arg>
+        </OnOpExe>
 
         <OnBattleAnim>
           <Arg>UINT16</Arg>
+          <Arg>UNICODE</Arg>
         </OnBattleAnim>
 
         <onAddOp>
@@ -79,6 +85,7 @@
           <Arg>UNICODE</Arg>
           <Arg>PLAYER</Arg>
           <Arg>ARRAY<of>ASSIST</of></Arg>
+          <Arg>UINT16</Arg>
         </battleOver>
 
 	</ClientMethods>

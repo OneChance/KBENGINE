@@ -126,6 +126,15 @@
         </Properties>
     </TOMB>
 
+    <BATTLE_OBJ>
+    FIXED_DICT
+    <implementedBy>BATTLE.bo_inst</implementedBy>
+        <Properties>
+             <dbid><Type>DBID</Type></dbid>
+             <health><Type>UINT16</Type></health>
+        </Properties>
+    </BATTLE_OBJ>
+
     <BATTLE_ENEMY>
     FIXED_DICT
     <implementedBy>BATTLE.enemy_inst</implementedBy>

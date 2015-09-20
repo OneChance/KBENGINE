@@ -837,7 +837,7 @@ class Account(KBEngine.Proxy):
         if(self.roles[0][8] == None):
             self.roles[0][8] = []
 
-        self.client.OnGetBattleData(self.roles[0],[])
+        self.client.OnGetBattleData(self.roles[0][7])
 
     def addOp(self,from_tag,to_tag,itemid):
 
@@ -848,11 +848,24 @@ class Account(KBEngine.Proxy):
         op.extend([from_tag, to_tag, itemid])
         opList.append(op)
 
-        self.client.onAddOp(len(self.roles[0][8]))
 
-        if(len(opList)==len(assistList)+1):
+        self.client.onAddOp(1 if (len(self.roles[0][8])==self.getValiOpNum()) else 0)
+
+        if(len(opList)==self.getValiOpNum()):
             #战斗开始
             self.battleStart()
+
+    def getValiOpNum(self):
+        assistList = self.roles[0][4]
+        vali_op_num = 0
+        if(self.roles[0][1].asDict()["health"]>0):
+            vali_op_num = 1
+
+        for i in range(0, len(assistList)):
+            if(assistList[i].asDict()["health"]>0):
+                vali_op_num = vali_op_num + 1
+
+        return vali_op_num
 
     def battleStart(self):
 
@@ -862,54 +875,96 @@ class Account(KBEngine.Proxy):
 
         self.addEnemyOp()
 
+
         for i in range(0, len(opList)):
 
            op = opList.pop(0)
-           fromBo = self.fromTagExplain(op.asDict()["from"])
 
-           if(fromBo.asDict()["health"]>0):
+           itemid = op.asDict()["itemid"]
 
-               #通知客户端播放from动画
-               self.client.OnBattleAnim(op.asDict()["itemid"])
+           if(itemid!=9000):
+               fromBo = self.fromTagExplain(op.asDict()["from"])
 
-               #留2秒给客户端播放动画
-               time.sleep(2)
 
-               #执行战斗命令
-               toList = self.toTagExplain(op.asDict()["to"])
+               if(fromBo.asDict()["health"]>0):
 
-               itemid = op.asDict()["itemid"]
+                   if(itemid<9000):
+                       for i in range(0, len(bggrids)):
+                           bagInfo = bggrids[i]
+                           if (bagInfo[0] == itemid):
+                               itemid = bagInfo[1]
+                               break
 
-               if(itemid>9000):
-                   #非背包道具(攻击，等待...)
+                   #通知客户端播放from动画
+                   self.client.OnBattleAnim(itemid,op.asDict()["from"])
+
+                   #留2秒给客户端播放动画
+                   time.sleep(2)
+
+                   #执行战斗命令
+                   toList = self.toTagExplain(op.asDict()["to"])
+
                    ItemFactory.use(fromBo, toList, iList[itemid])
-               else:
-                   for i in range(0, len(bggrids)):
-                       bagInfo = bggrids[i]
-                       if (bagInfo[0] == itemid):
-                           ItemFactory.use(fromBo, toList, iList[bagInfo[1]])
-                           self.removeItem(iList[bagInfo[1]].asDict(), 1, itemid)
-                           break
+                   if(itemid<9000):
+                       self.removeItem(iList[bagInfo[1]].asDict(), 1, op.asDict()["itemid"])
 
+                   #通知客户端更新ui(血量 道具数量 变化)
+                   self.writeToDB()
 
-               #通知客户端更新ui(血量 道具数量 变化)
-               self.writeToDB()
+                   self.client.OnOpExe(self.formatToListChange(toList),self.roles[0][3],itemid)
 
-               self.client.OnGetBattleData(self.roles[0],self.roles[0][3])
+                   #间隔3秒后判断是否结束战斗
+                   time.sleep(3)
 
-               #间隔3秒后判断是否结束战斗
-               time.sleep(3)
-
-               #判断战斗是否结束
-               battleRes = self.getBattleRes()
-               if(battleRes!="goon"):
+                   #判断战斗是否结束
+                   battleRes = self.getBattleRes()
                    if(battleRes=="win"):
-                       self.client.battleOver(battleRes,self.roles[0][1],self.roles[0][4])
+                       self.client.battleOver(battleRes,self.roles[0][1],self.roles[0][4],len(opList))
+                       break
                    else:
-                       self.client.battleOver(battleRes,TPLAYER(),[])
-                   return
+
+                       playerInfoDict = {"name": "",
+                              "stamina": 0,
+                              "maxstamina": 0,
+                              "health": 0,
+                              "maxhealth": 0,
+                              "strength": 0,
+                              "archeology": 0,
+                              "def": 0,
+                              "dodge": 0,
+                              "level": 0,
+                              "exp": 0,
+                              "digpower": 0,
+                              "pro": "",
+                              "img": 0,
+                              "attack": 0}
+
+                       playerInfo = TPLAYER().createFromDict(playerInfoDict)
+
+                       self.client.battleOver(battleRes,playerInfo,[],len(opList))
+
+                       if(battleRes=="loose"):
+                           break;
 
 
+
+    #这个方法将ASSIST,PLAYER,BATTLE_ENMEY转换成同一类型，用于传输
+    def formatToListChange(self,toList):
+
+        boList = []
+
+        for i in range(0, len(toList)):
+            bo = TBATTLE_OBJ()
+
+            dbid = 1
+
+            if "dbid" in toList[i].asDict():
+                dbid = toList[i].asDict()["dbid"]
+
+            bo.extend([dbid, toList[i].asDict()["health"]])
+            boList.append(bo)
+
+        return boList
 
     #获取战斗结果
     def getBattleRes(self):
@@ -979,7 +1034,7 @@ class Account(KBEngine.Proxy):
 
             if(enemyList[i].asDict()["health"]>0):
                 op = TBATTLE_OP()
-                op.extend([enemyList[i].asDict()["dbid"], toBo_dbid, 9001])
+                op.extend([str(enemyList[i].asDict()["dbid"]), toBo_dbid, 9001])
                 opList.append(op)
 
 
