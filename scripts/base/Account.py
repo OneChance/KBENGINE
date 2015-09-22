@@ -16,6 +16,11 @@ import time
 
 
 class Account(KBEngine.Proxy):
+
+    global current_enemy
+
+    current_enemy = 0
+
     def __init__(self):
         KBEngine.Proxy.__init__(self)
         self.gdata = None
@@ -33,6 +38,21 @@ class Account(KBEngine.Proxy):
             self.setAssistDBID()
         self.client.onReqRoleList(self.roles)
         gdata = KBEngine.createBaseAnywhereFromDBID("Gdata", 1, self.onGetData)
+
+
+    def toPreFloor(self,tombid):
+        self.roles[0][10] = min(self.roles[0][10] - 1,1)
+
+    def toNextFloor(self,tombid):
+        self.roles[0][10] = self.roles[0][10] + 1
+
+    def enterTomb(self,tombid):
+
+        self.roles[0][9] = tombid
+        self.roles[0][10] = 1
+
+        self.client.onEnterTomb(tombid)
+
 
     def onGetData(self, baseRef, dbid, wasActive):
         gdataEntity = KBEngine.entities.get(baseRef.id)
@@ -585,7 +605,26 @@ class Account(KBEngine.Proxy):
 
         return "ok"
 
+
+    def getFloorInfoByTombIdFloorId(self,tomb_id,floor_id):
+
+        tombs = self.roles[0][6]
+
+        for i in range(0, len(tombs)):
+
+            if (tombs[i][0] == tomb_id):
+
+                floors = tombs[i][1]
+
+                for j in range(0, len(floors)):
+
+                    if (floors[j][0] == floor_id):
+                         return floors[j]
+
+
     def recordScene(self, tomb_id, floor_id, floorInfo):
+
+        #在记录时要确定当前tomb,与floor与server端是否一致，不一致判定为作弊(暂不实现)
 
         tombs = self.roles[0][6]
 
@@ -618,7 +657,19 @@ class Account(KBEngine.Proxy):
 
         self.writeToDB()
 
-    def startDig(self, tomb_id, floor_id, digInfo):
+    def digToTex(self,current_deep,max_deep,digTex):
+
+        remain_deep = max_deep - current_deep
+
+        while (current_deep > (digTex + 1) * (int)(max_deep * 0.3333)):
+            digTex = digTex + 1
+
+        return digTex
+
+    def startDig(self, digInfo):
+
+        tomb_id = self.roles[0][9]
+        floor_id = self.roles[0][10]
 
         digMsg = "ok"
 
@@ -639,7 +690,7 @@ class Account(KBEngine.Proxy):
                         currentDig = None
 
                         for k in range(0, len(digs)):
-
+                            #如果这个dig已经存在，返回
                             if (digs[k][0] == digInfo[0]):
                                 currentDig = digs[k]
                                 break
@@ -675,8 +726,7 @@ class Account(KBEngine.Proxy):
                             else:
                                 currentDig[5] = currentDig[5] + sumDigPower
 
-                                if (currentDig[5] > (currentDig[6] + 1) * (int)(currentDig[4] * 0.3333)):
-                                    currentDig[6] = min(2, currentDig[6] + 1)
+                                currentDig[6] = min(2, self.digToTex(currentDig[5],currentDig[4],currentDig[6]))
 
                                 #当前深度大于等于总深度
                                 if(currentDig[5] >= currentDig[4]):
@@ -694,7 +744,10 @@ class Account(KBEngine.Proxy):
                                         currentDig[6] = 3
                                         floors[j][6] = currentDig.asDict()["vecs"][0]
                                     else:
+
                                         digMsg = self.itemFall(''.join([str(tomb_id),'@',str(floor_id),'@dig']))
+                                        if(digMsg==''):
+                                            digMsg = 'DIGNOTHING'
 
 
                                 # 扣除体能
@@ -770,10 +823,7 @@ class Account(KBEngine.Proxy):
 
                     self.addItem(itemInfo.asDict(),num,itemInfo.asDict()["level"])
 
-        if (itemGet == ''):
-            return "DIGNOTHING"
-        else:
-            return itemGet
+        return itemGet
 
 
 	#根据item_id获取物品
@@ -813,7 +863,12 @@ class Account(KBEngine.Proxy):
         self.client.OnGetSceneData(enemyTypeList)
 
     #获取战斗场景所需数据
-    def getBattleData(self,enemyid):
+    def getBattleData(self,enemyid,enemy_dbid):
+
+        global current_enemy
+
+        current_enemy = enemy_dbid
+
         iList = self.gdata.items
 
         #生成敌人数量
@@ -918,8 +973,28 @@ class Account(KBEngine.Proxy):
 
                    #判断战斗是否结束
                    battleRes = self.getBattleRes()
-                   if(battleRes=="win"):
-                       self.client.battleOver(battleRes,self.roles[0][1],self.roles[0][4],len(opList))
+                   if(battleRes!="goon" and battleRes != "loose"):
+
+
+                       tomb_id = self.roles[0][9]
+                       floor_id = self.roles[0][10]
+
+                       #移除敌人
+                       floorInfo = self.getFloorInfoByTombIdFloorId(tomb_id,floor_id)
+
+                       enemyList = floorInfo[3]
+
+                       global current_enemy
+
+                       for i in range(0, len(enemyList)):
+                           if(enemyList[i].asDict()["dbid"]==current_enemy):
+                               enemyList.remove(enemyList[i])
+                               break
+
+                       self.client.battleOver(battleRes,self.roles[0][1],self.roles[0][4],len(opList),self.roles[0][3],current_enemy)
+
+                       current_enemy = 0
+
                        break
                    else:
 
@@ -941,7 +1016,7 @@ class Account(KBEngine.Proxy):
 
                        playerInfo = TPLAYER().createFromDict(playerInfoDict)
 
-                       self.client.battleOver(battleRes,playerInfo,[],len(opList))
+                       self.client.battleOver(battleRes,playerInfo,[],len(opList),[],0)
 
                        if(battleRes=="loose"):
                            break;
@@ -1006,8 +1081,13 @@ class Account(KBEngine.Proxy):
                  assistList[i] = assist
 
             #获取掉落物品
+            key = ''.join([str(self.roles[0][9]),'@',str(self.roles[0][10]),'@',str(enemyList[0].asDict()["enemyid"])])
 
-            return "win"
+            fallMsg = self.itemFall(key)
+
+            fallMsg = ''.join([fallMsg,'exp@',str(exp)])
+
+            return fallMsg
         elif(playerDie):
             return "loose"
         else:
@@ -1049,6 +1129,8 @@ class Account(KBEngine.Proxy):
         else:
             self.client.onUndoOp("")
 
+    def queryOtherPlayer(self):
+        ERROR_MSG("other player count:%r" % (len(self.otherClients)))
 
     def onTimer(self, id, userArg):
         """

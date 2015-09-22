@@ -86,7 +86,14 @@
           <Arg>PLAYER</Arg>
           <Arg>ARRAY<of>ASSIST</of></Arg>
           <Arg>UINT16</Arg>
+          <Arg>ARRAY<of>BGGRID</of></Arg>
+          <Arg>UINT16</Arg>
         </battleOver>
+
+        <onEnterTomb>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </onEnterTomb>
 
 	</ClientMethods>
 
@@ -144,8 +151,6 @@
 
         <startDig>
           <Exposed/>
-          <Arg>	UINT16	</Arg>
-          <Arg>	UINT16	</Arg>
           <Arg>ELEMENTDATA</Arg>
         </startDig>
 
@@ -162,6 +167,7 @@
         <getBattleData>
           <Exposed/>
           <Arg>	UINT16 </Arg>
+          <Arg>	UINT16 </Arg>
         </getBattleData>
 
         <addOp>
@@ -175,6 +181,22 @@
           <Exposed/>
         </undoOp>
 
+        <enterTomb>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </enterTomb>
+
+        <toPreFloor>
+          <Exposed/>
+        </toPreFloor>
+
+        <toNextFloor>
+          <Exposed/>
+        </toNextFloor>
+
+        <queryOtherPlayer>
+          <Exposed/>
+        </queryOtherPlayer>
 
 	</BaseMethods>
 

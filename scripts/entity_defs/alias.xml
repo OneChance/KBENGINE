@@ -171,9 +171,10 @@
             <assists><Type> ARRAY <of> ASSIST </of></Type></assists>
             <money><Type>	UINT32	</Type></money>
             <tombs><Type> ARRAY <of> TOMB </of></Type></tombs>
-
             <battle_enemys><Persistent>false</Persistent><Type> ARRAY <of> BATTLE_ENEMY </of></Type></battle_enemys>
             <battle_ops><Persistent>false</Persistent><Type> ARRAY <of> BATTLE_OP </of></Type></battle_ops>
+            <current_tomb><Persistent>false</Persistent><Type>UINT16</Type></current_tomb>
+            <current_floor><Persistent>false</Persistent><Type>UINT16</Type></current_floor>
          </Properties>
     </ROLE>
 
