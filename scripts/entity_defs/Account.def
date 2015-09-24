@@ -95,6 +95,13 @@
           <Arg>	UINT16 </Arg>
         </onEnterTomb>
 
+        <onQueryOtherPlayer>
+          <Exposed/>
+          <Arg>ARRAY<of>PLAYER</of></Arg>
+          <Arg>	UINT16 </Arg>
+          <Arg>	UINT16 </Arg>
+        </onQueryOtherPlayer>
+
 	</ClientMethods>
 
 	<BaseMethods>
@@ -196,6 +203,9 @@
 
         <queryOtherPlayer>
           <Exposed/>
+          <Arg>	UNICODE </Arg>
+          <Arg>ARRAY<of>UNICODE</of></Arg>
+          <Arg>	UINT16 </Arg>
         </queryOtherPlayer>
 
 	</BaseMethods>

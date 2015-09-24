@@ -81,7 +81,7 @@ class Account(KBEngine.Proxy):
 
         self.addExp(playerInfoDict, 0, [], 0)
         player = TPLAYER().createFromDict(playerInfoDict)
-        role.extend([0, player, [], [], [], 5000, []])
+        role.extend([0, player, [], [], [], 5000, [],[],[],0,0])
         self.roles[0] = role
 
         self.writeToDB()
@@ -1129,8 +1129,56 @@ class Account(KBEngine.Proxy):
         else:
             self.client.onUndoOp("")
 
-    def queryOtherPlayer(self):
-        ERROR_MSG("other player count:%r" % (len(self.otherClients)))
+    def queryOtherPlayer(self,name,proList,page):
+
+        playerInfos = []
+
+        for e in KBEngine.entities.values():
+            if(isinstance(e, Account)):
+                if(e.databaseID != self.databaseID):
+
+                    add_name = False
+                    add_pro = False
+
+                    info = e.roles[0][1].asDict()
+
+                    if(name!=''):
+                        if(name in info["name"]):
+                            add_name = True
+                    else:
+                        add_name = True
+
+                    for pro in proList:
+                        if(pro==info["pro"]):
+                            add_pro = True
+                            break
+
+                    if(add_name and add_pro):
+                        playerInfos.append(e.roles[0][1])
+
+        maxPage = int(len(playerInfos) / 5)
+
+        if len(playerInfos)%5>0:
+            maxPage=maxPage+1
+
+        maxPage = max(1,maxPage)
+
+        page = min(maxPage,page)
+        page = max(1,page)
+
+        playerInfosBack = []
+
+        pageIndex = 0
+
+        for i in range(0, 5):
+
+            pageIndex = (page-1)*5+i
+
+            if(pageIndex<len(playerInfos)):
+                playerInfosBack.append(playerInfos[pageIndex])
+
+        self.client.onQueryOtherPlayer(playerInfosBack,maxPage,page)
+
 
     def onTimer(self, id, userArg):
         """
