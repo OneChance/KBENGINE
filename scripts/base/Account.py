@@ -12,6 +12,8 @@ from PROINFO import *
 from EQUIP import *
 from ItemFactory import *
 from BATTLE import *
+from TEAM import *
+
 import time
 
 
@@ -37,6 +39,10 @@ class Account(KBEngine.Proxy):
             self.setEquipDBID()
             self.setAssistDBID()
         self.client.onReqRoleList(self.roles)
+
+        #游戏基本信息加载完后，如果是组队的情况，通知队友上线，并获得队友在线信息
+        self.onLineNoti()
+
         gdata = KBEngine.createBaseAnywhereFromDBID("Gdata", 1, self.onGetData)
 
 
@@ -77,7 +83,9 @@ class Account(KBEngine.Proxy):
                           "digpower": 0,
                           "pro": pro,
                           "img": 1,
-                          "attack": 0}
+                          "attack": 0,
+                          "teamid": 0,
+                          "isleader": 0}
 
         self.addExp(playerInfoDict, 0, [], 0)
         player = TPLAYER().createFromDict(playerInfoDict)
@@ -236,6 +244,12 @@ class Account(KBEngine.Proxy):
         iList = self.gdata.items
 
         if (bg_dbid > 0):
+
+            #如果已经组队，不允许NPC雇佣兵参战
+            if(self.roles[0][1].asDict()["teamid"]>0):
+                self.client.onAssistOperOver(TROLE(), "TEAMEDNOASSIST")
+                return
+
             for i in range(0, len(bggrids)):
                 bagInfo = bggrids[i]
 
@@ -286,7 +300,7 @@ class Account(KBEngine.Proxy):
                              bagInfoDict["dodge"],
                              bagInfoDict["exp"],
                              bagInfoDict["digpower"],
-                             bagInfoDict["attack"]])
+                             bagInfoDict["attack"],0,"","",0,0])
                         assists.append(assist)
                         bggrids.remove(bagInfo)
 
@@ -717,12 +731,14 @@ class Account(KBEngine.Proxy):
                                 sumDigPower = sumDigPower + self.roles[0][1].asDict()["digpower"]
 
                             for a in range(0, len(self.roles[0][4])):
-                                if (self.roles[0][4][a].asDict()["stamina"] > 0):
-                                    sumDigPower = sumDigPower + self.roles[0][4][a].asDict()["digpower"]
+                                #组队情况下，离线队员不贡献挖掘力
+                                if((not self.isTeam())  or (self.roles[0][4][a].asDict()["onlinestate"]==1)):
+                                    if (self.roles[0][4][a].asDict()["stamina"] > 0):
+                                        sumDigPower = sumDigPower + self.roles[0][4][a].asDict()["digpower"]
 
                             if (sumDigPower == 0):
                                 digMsg = "NOSTAMINA"
-                                self.client.onDigUpdated(digInfo, TTROLE(), digMsg)
+                                self.client.onDigUpdated(digInfo, TROLE(), digMsg)
                             else:
                                 currentDig[5] = currentDig[5] + sumDigPower
 
@@ -1012,7 +1028,9 @@ class Account(KBEngine.Proxy):
                               "digpower": 0,
                               "pro": "",
                               "img": 0,
-                              "attack": 0}
+                              "attack": 0,
+                              "teamid": 0,
+                              "isleader": 0}
 
                        playerInfo = TPLAYER().createFromDict(playerInfoDict)
 
@@ -1154,6 +1172,9 @@ class Account(KBEngine.Proxy):
                             break
 
                     if(add_name and add_pro):
+
+                        e.roles[0][1][0][14] = e.databaseID #attack字段暂存数据库ID
+
                         playerInfos.append(e.roles[0][1])
 
         maxPage = int(len(playerInfos) / 5)
@@ -1179,6 +1200,24 @@ class Account(KBEngine.Proxy):
 
         self.client.onQueryOtherPlayer(playerInfosBack,maxPage,page)
 
+    def getAccountByDBID(self,dbid):
+
+        account = None
+
+        for e in KBEngine.entities.values():
+            if(isinstance(e, Account)):
+                if(e.databaseID == dbid):
+                    account = e
+                    break
+
+        return account
+
+
+    def invitePlayer(self,dbid):
+        TEAM_invitePlayer(self,dbid)
+
+    def inviteResponse(self,agreeFlag,toPlayer):
+        TEAM_inviteResponse(self,agreeFlag,toPlayer)
 
     def onTimer(self, id, userArg):
         """
@@ -1217,5 +1256,55 @@ class Account(KBEngine.Proxy):
         KBEngine method.
         客户端对应实体已经销毁
         """
-        DEBUG_MSG("Account[%i].onClientDeath:" % self.id)
+        ERROR_MSG("%r off line" % (self.databaseID))
+
+        #当客户端断线的时候，如果组队了，通知队伍中的其他成员，更新自己状态为离线
+        if(self.roles[0][1].asDict()["teamid"]>0):
+            assistList = self.roles[0][4]
+
+            for assist in assistList:
+                playerID = assist.asDict()["playerid"]
+
+                ERROR_MSG("notify %r" % (playerID))
+
+                player = self.getAccountByDBID(playerID)
+
+                if(player!=None):
+                    player_ass = player.roles[0][4]
+
+                    for pa in player_ass:
+                        if(pa.asDict()["playerid"]==self.databaseID):
+                            pa[19] = 0
+
+                    player.client.offLineNoti(self.databaseID)
+
+
         self.destroy()
+
+    def onLineNoti(self):
+        if(self.roles[0][1].asDict()["teamid"]>0):
+            assistList = self.roles[0][4]
+
+            for assist in assistList:
+                playerID = assist.asDict()["playerid"]
+
+                player = self.getAccountByDBID(playerID)
+
+                if(player!=None):
+                    player_ass = player.roles[0][4]
+
+                    for pa in player_ass:
+                        if(pa.asDict()["playerid"]==self.databaseID):
+                            pa[19] = 1
+
+                    player.client.onLineNoti(self.databaseID)
+
+                else:
+                    assist[19] = 0
+
+
+    def isTeam(self):
+        if(self.roles[0][1].asDict()["teamid"]>0):
+            return True
+        else:
+            return False

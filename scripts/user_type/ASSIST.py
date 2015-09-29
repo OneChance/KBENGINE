@@ -14,7 +14,7 @@ class TASSIST(list):
 			"maxstamina" : self[2],
 			"health" : self[3],
 			"maxhealth" : self[4],
-			"iid": self[5],
+			"iid": self[5],     #如果是玩家,这个字段放置img
 			"level": self[6],
 			"commontype": self[7],
 			"strength" : self[8],
@@ -24,6 +24,11 @@ class TASSIST(list):
 			"exp" : self[12],
 			"digpower" : self[13],
 			"attack" : self[14],
+			"player" : self[15],
+			"playername" : self[16],
+			"playerpro" : self[17],
+			"playerid" : self[18],
+			"onlinestate" : self[19],
 		}
 
 		return data
@@ -31,7 +36,9 @@ class TASSIST(list):
 	def createFromDict(self, dictData):
 		self.extend([dictData["dbid"],dictData["stamina"],dictData["maxstamina"],dictData["health"],dictData["maxhealth"],
 					 dictData["iid"],dictData["level"],dictData["commontype"],dictData["strength"],dictData["archeology"],
-					 dictData["def"],dictData["dodge"],dictData["exp"],dictData["digpower"],dictData["attack"]])
+					 dictData["def"],dictData["dodge"],dictData["exp"],dictData["digpower"],dictData["attack"],
+					 dictData["player"],dictData["playername"],dictData["playerpro"],dictData["playerid"],
+					 dictData["onlinestate"]])
 		return self
 		
 class ASSIST_PICKLER:

@@ -102,6 +102,27 @@
           <Arg>	UINT16 </Arg>
         </onQueryOtherPlayer>
 
+        <onInvitePlayer>
+          <Exposed/>
+          <Arg>	UNICODE </Arg>
+          <Arg>ARRAY<of>ASSIST</of></Arg>
+        </onInvitePlayer>
+
+        <onInvited>
+          <Exposed/>
+          <Arg>	PLAYER </Arg>
+        </onInvited>
+
+        <offLineNoti>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </offLineNoti>
+
+        <onLineNoti>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </onLineNoti>
+
 	</ClientMethods>
 
 	<BaseMethods>
@@ -207,6 +228,17 @@
           <Arg>ARRAY<of>UNICODE</of></Arg>
           <Arg>	UINT16 </Arg>
         </queryOtherPlayer>
+
+        <invitePlayer>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </invitePlayer>
+
+        <inviteResponse>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+          <Arg>	UINT16 </Arg>
+        </inviteResponse>
 
 	</BaseMethods>
 

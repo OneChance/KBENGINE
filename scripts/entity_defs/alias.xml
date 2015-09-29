@@ -30,6 +30,9 @@
             <pro><Type>	UNICODE	</Type></pro>
             <img><Type>	UINT16	</Type></img>
             <attack><Type>	UINT16	</Type></attack>
+
+            <teamid><Type>UINT16</Type></teamid>
+            <isleader><Type>UINT16</Type></isleader>
         </Properties>
     </PLAYER>
     
@@ -75,6 +78,11 @@
              <exp><Type>	UINT16	</Type></exp>
              <digpower><Type>	UINT16	</Type></digpower>
              <attack><Type>	UINT16	</Type></attack>
+             <player><Type>	UINT16	</Type></player>
+             <playername><Type>	UNICODE	</Type></playername>
+             <playerpro><Type>	UNICODE	</Type></playerpro>
+             <playerid><Type>	DBID	</Type></playerid>
+             <onlinestate><Type>	UINT16	</Type></onlinestate>
         </Properties>
     </ASSIST>
 

@@ -23,10 +23,28 @@ class TPLAYER(dict):
 					"digpower" : val[11],
 					"pro" : val[12],
 					"img" : val[13],
-					"attack" : val[14]}
+					"attack" : val[14],
+					"teamid" : val[15],
+					"isleader" : val[16]}
 
 	def createFromDict(self, dictData):
-		self[0] = [dictData["name"],dictData["stamina"],dictData["maxstamina"],dictData["health"],dictData["maxhealth"],dictData["strength"],dictData["archeology"],dictData["def"],dictData["dodge"],dictData["level"],dictData["exp"],dictData["digpower"],dictData["pro"],dictData["img"],dictData["attack"]]
+		self[0] = [dictData["name"],
+				   dictData["stamina"],
+				   dictData["maxstamina"],
+				   dictData["health"],
+				   dictData["maxhealth"],
+				   dictData["strength"],
+				   dictData["archeology"],
+				   dictData["def"],
+				   dictData["dodge"],
+				   dictData["level"],
+				   dictData["exp"],
+				   dictData["digpower"],
+				   dictData["pro"],
+				   dictData["img"],
+				   dictData["attack"],
+				   dictData["teamid"],
+				   dictData["isleader"]]
 		return self
 		
 class PLAYER_PICKLER:
