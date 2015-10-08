@@ -32,16 +32,14 @@ class Account(KBEngine.Proxy):
         exposed.
         客户端请求查询角色列表
         """
-        DEBUG_MSG("Account[%i].reqRoleList: size=%i." % (self.id, len(self.roles)))
-
         if (len(self.roles) > 0):
             self.setBgDBID()
             self.setEquipDBID()
             self.setAssistDBID()
-        self.client.onReqRoleList(self.roles)
 
-        #游戏基本信息加载完后，如果是组队的情况，通知队友上线，并获得队友在线信息
+        #通知队友上线，并获得队友在线信息
         self.onLineNoti()
+        self.client.onReqRoleList(self.roles)
 
         gdata = KBEngine.createBaseAnywhereFromDBID("Gdata", 1, self.onGetData)
 
@@ -85,7 +83,8 @@ class Account(KBEngine.Proxy):
                           "img": 1,
                           "attack": 0,
                           "teamid": 0,
-                          "isleader": 0}
+                          "isleader": 0,
+                          "scenelevel": 2}
 
         self.addExp(playerInfoDict, 0, [], 0)
         player = TPLAYER().createFromDict(playerInfoDict)
@@ -1030,7 +1029,8 @@ class Account(KBEngine.Proxy):
                               "img": 0,
                               "attack": 0,
                               "teamid": 0,
-                              "isleader": 0}
+                              "isleader": 0,
+                              "scenelevel": 0}
 
                        playerInfo = TPLAYER().createFromDict(playerInfoDict)
 
@@ -1157,6 +1157,7 @@ class Account(KBEngine.Proxy):
 
                     add_name = False
                     add_pro = False
+                    add_team = True
 
                     info = e.roles[0][1].asDict()
 
@@ -1171,10 +1172,14 @@ class Account(KBEngine.Proxy):
                             add_pro = True
                             break
 
-                    if(add_name and add_pro):
+                    if(self.roles[0][1].asDict()["teamid"]>0):
+                        for ass in self.roles[0][4] :
+                            if(ass.asDict()["playerid"]==e.databaseID):
+                                add_team = False
+                                break
 
+                    if(add_name and add_pro and add_team):
                         e.roles[0][1][0][14] = e.databaseID #attack字段暂存数据库ID
-
                         playerInfos.append(e.roles[0][1])
 
         maxPage = int(len(playerInfos) / 5)
@@ -1256,7 +1261,6 @@ class Account(KBEngine.Proxy):
         KBEngine method.
         客户端对应实体已经销毁
         """
-        ERROR_MSG("%r off line" % (self.databaseID))
 
         #当客户端断线的时候，如果组队了，通知队伍中的其他成员，更新自己状态为离线
         if(self.roles[0][1].asDict()["teamid"]>0):
@@ -1264,8 +1268,6 @@ class Account(KBEngine.Proxy):
 
             for assist in assistList:
                 playerID = assist.asDict()["playerid"]
-
-                ERROR_MSG("notify %r" % (playerID))
 
                 player = self.getAccountByDBID(playerID)
 
@@ -1281,27 +1283,125 @@ class Account(KBEngine.Proxy):
 
         self.destroy()
 
+    #上线通知
     def onLineNoti(self):
-        if(self.roles[0][1].asDict()["teamid"]>0):
-            assistList = self.roles[0][4]
+        if(len(self.roles)>0):
+            if(self.roles[0][1].asDict()["teamid"]>0):
+                assistList = self.roles[0][4]
 
-            for assist in assistList:
-                playerID = assist.asDict()["playerid"]
+                for assist in assistList:
+                    playerID = assist.asDict()["playerid"]
 
-                player = self.getAccountByDBID(playerID)
+                    player = self.getAccountByDBID(playerID)
 
-                if(player!=None):
-                    player_ass = player.roles[0][4]
+                    if(player!=None):
 
-                    for pa in player_ass:
-                        if(pa.asDict()["playerid"]==self.databaseID):
-                            pa[19] = 1
+                        assist[19] = 1 #标识玩家在线
 
-                    player.client.onLineNoti(self.databaseID)
+                        player_ass = player.roles[0][4]
 
-                else:
-                    assist[19] = 0
+                        for pa in player_ass:
+                            if(pa.asDict()["playerid"]==self.databaseID):
+                                pa[19] = 1 #标识玩家雇佣兵里的自己状态在线
+                                break
 
+                        player.client.onLineNoti(self.databaseID)
+
+                    else:
+                        assist[19] = 0 #将在线状态置为0
+
+    def LeaveTeam(self,playerId,type):
+        #队长统一处理，如果以后有线程安全问题，可以用同步解决
+        leader = TEAM_GetLeader(self)
+        leader.notifyMemberLeave(playerId,type)
+
+
+    def notifyMemberLeave(self,playerId,type):
+
+        leavePlayerAccount = None
+
+        #如果是队长离队，将队长职位转交
+        if(self.databaseID == playerId):
+            self.giveLeader(0)
+            leavePlayerAccount = self
+        else:
+            leavePlayerAccount =  self.getAccountByDBID(playerId)
+
+        if(leavePlayerAccount!=None):
+            for ass in leavePlayerAccount.roles[0][4] :
+                 assId = ass.asDict()["playerid"]
+                 assAccount = self.getAccountByDBID(assId)
+
+                 if(assAccount != None):
+                     for ass_ass in assAccount.roles[0][4]:
+                         if(ass_ass.asDict()["playerid"] == playerId):
+                             assAccount.roles[0][4].remove(ass_ass)
+                             break
+
+                     assAccount.writeToDB()
+                     assAccount.client.PlayerLeave(playerId,type)
+
+            leavePlayerAccount.roles[0][4] = []
+            leavePlayerAccount.roles[0][1][0][15] = 0
+            leavePlayerAccount.writeToDB()
+            leavePlayerAccount.client.PlayerLeave(playerId,type)
+
+
+    def RecordSceneLevel(self,level):
+        self.roles[0][1][0][17] = level
+
+    def giveLeader(self,playerId):
+        if(playerId == 0):
+            #自动转交，掉线或者离队
+            self.roles[0][1][0][16] = 0
+            playerId = self.roles[0][4][0].asDict()["playerid"]
+
+        playerAccount = self.getAccountByDBID(playerId)
+        playerAccount.roles[0][1][0][16] = 1
+        #更新队伍ID
+        playerAccount.roles[0][1][0][15] = playerId
+        playerAccount.client.LeaderChange(1)
+        self.client.LeaderChange(0)
+
+        #更新队伍ID
+        for ass in playerAccount.roles[0][4] :
+            assAccount = self.getAccountByDBID(assId)
+            if(assAccount!=None):
+                assAccount.roles[0][1][0][15] = playerId
+
+    def DoTeam(self, invitePlayer):
+
+        selfAD = PlayerDataToAssist(self.roles[0][1].asDict(),self.databaseID)
+        invitePlayerAD = PlayerDataToAssist(invitePlayer.roles[0][1].asDict(),invitePlayer.databaseID)
+
+        #设置队伍ID
+        if(self.roles[0][1].asDict()["teamid"]==0):
+            self.roles[0][1][0][15] = self.databaseID  #队长id作为队伍id
+            self.roles[0][1][0][16] = 1 #队长标志
+
+        invitePlayer.roles[0][1][0][15] = self.databaseID
+
+        #添加到雇佣兵列表
+        #1.添加队长
+        invitePlayer.roles[0][4].append(selfAD);
+        #2.添加队长雇佣兵，也就是其他玩家
+        leaderAssList = self.roles[0][4]
+
+        for ass in leaderAssList:
+            invitePlayer.roles[0][4].append(ass);
+            assId = ass.asDict()["playerid"]
+            #通知其他队员添加这个玩家
+            otherMember = self.getAccountByDBID(assId)
+            otherMember.roles[0][4].append(invitePlayerAD);
+            otherMember.writeToDB()
+            otherMember.client.onInvitePlayer("ok", otherMember.roles[0][4],0)
+
+        #3.队长添加这个玩家
+        self.roles[0][4].append(invitePlayerAD);
+        self.client.onInvitePlayer("ok", self.roles[0][4],1)
+
+        invitePlayer.writeToDB()
+        invitePlayer.client.onInvitePlayer("ok", invitePlayer.roles[0][4],2)
 
     def isTeam(self):
         if(self.roles[0][1].asDict()["teamid"]>0):

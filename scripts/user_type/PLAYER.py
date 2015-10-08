@@ -25,7 +25,8 @@ class TPLAYER(dict):
 					"img" : val[13],
 					"attack" : val[14],
 					"teamid" : val[15],
-					"isleader" : val[16]}
+					"isleader" : val[16],
+					"scenelevel" : val[17]}
 
 	def createFromDict(self, dictData):
 		self[0] = [dictData["name"],
@@ -44,7 +45,8 @@ class TPLAYER(dict):
 				   dictData["img"],
 				   dictData["attack"],
 				   dictData["teamid"],
-				   dictData["isleader"]]
+				   dictData["isleader"],
+				   dictData["scenelevel"]]
 		return self
 		
 class PLAYER_PICKLER:

@@ -106,6 +106,7 @@
           <Exposed/>
           <Arg>	UNICODE </Arg>
           <Arg>ARRAY<of>ASSIST</of></Arg>
+          <Arg>	UINT16 </Arg>
         </onInvitePlayer>
 
         <onInvited>
@@ -122,6 +123,17 @@
           <Exposed/>
           <Arg>	UINT16 </Arg>
         </onLineNoti>
+
+        <LeaderChange>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </LeaderChange>
+
+        <PlayerLeave>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+          <Arg>	UINT16 </Arg>
+        </PlayerLeave>
 
 	</ClientMethods>
 
@@ -239,6 +251,17 @@
           <Arg>	UINT16 </Arg>
           <Arg>	UINT16 </Arg>
         </inviteResponse>
+
+        <LeaveTeam>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+          <Arg>	UINT16 </Arg>
+        </LeaveTeam>
+
+        <RecordSceneLevel>
+          <Exposed/>
+          <Arg>	UINT16 </Arg>
+        </RecordSceneLevel>
 
 	</BaseMethods>
 

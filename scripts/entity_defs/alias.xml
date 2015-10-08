@@ -33,6 +33,7 @@
 
             <teamid><Type>UINT16</Type></teamid>
             <isleader><Type>UINT16</Type></isleader>
+            <scenelevel><Type>UINT16</Type></scenelevel>
         </Properties>
     </PLAYER>
     
